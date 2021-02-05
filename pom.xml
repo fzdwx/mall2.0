@@ -9,6 +9,9 @@
     <packaging>pom</packaging>
     <version>0.1</version>
     <modules>
+        <!--
+           api -> service -> mapper -> pojo -> common
+        -->
         <module>common</module>
         <module>pojo</module>
         <module>mapper</module>
