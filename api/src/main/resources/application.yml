@@ -38,4 +38,6 @@ spring:
 mybatis-plus:
   type-aliases-package: com.like.pojo               # 所有实体类所在的包路径
   mapper-locations: classpath:mapper/*.xml          # mapper映射文件
+  global-config:
+    banner: false
 
