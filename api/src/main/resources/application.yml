@@ -35,9 +35,11 @@ spring:
 # mybatis 配置
 #
 ##################################################
-mybatis-plus:
+mapper:
+  mappers: com.like.my.mapper.MyMapper
+  not-empty: false                                  # 是否追加查询的字段是否为空
+  identity: MYSQL
+mybatis:
   type-aliases-package: com.like.pojo               # 所有实体类所在的包路径
   mapper-locations: classpath:mapper/*.xml          # mapper映射文件
-  global-config:
-    banner: false
 
