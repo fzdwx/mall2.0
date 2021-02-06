@@ -25,11 +25,10 @@
 package com.like.my.mapper;
 
 
-import tk.mybatis.mapper.common.Mapper;
-import tk.mybatis.mapper.common.MySqlMapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * 继承自己的MyMapper
  */
-public interface MyMapper<T> extends Mapper<T>, MySqlMapper<T> {
+public interface MyMapper<T> extends BaseMapper<T> {
 }
