@@ -49,7 +49,7 @@ public class PassportController {
         // 4. 注册
         Users u = usersService.createUser(user);
 
-        return u == null ? HttpJSONResult.errorMsg("用户数据保存失败，请稍后再试") : HttpJSONResult.ok("注册成功");
+        return u == null ? HttpJSONResult.errorMsg("用户数据保存失败，请稍后再试") : HttpJSONResult.ok();
     }
 
 }

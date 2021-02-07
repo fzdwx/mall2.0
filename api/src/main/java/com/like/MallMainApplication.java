@@ -16,5 +16,10 @@ import org.springframework.context.annotation.ComponentScan;
 public class MallMainApplication {
     public static void main(String[] args) {
         SpringApplication.run(MallMainApplication.class, args);
+
+        System.out.println("");
+        System.out.println("");
+        System.out.println("                                                欢迎使用 Like Mall 商城后台");
+        System.out.println("                                       后台文档地址: http://localhost:8888/doc.html");
     }
 }
