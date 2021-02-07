@@ -1,5 +1,7 @@
 package com.like.service;
 
+import com.like.pojo.Users;
+import com.like.pojo.bo.UserBo;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -17,4 +19,12 @@ public interface UsersService {
      * @return boolean
      */
     public boolean queryUserNameIsExist(@Param("username") String username);
+
+    /**
+     * 创建用户
+     *
+     * @param user 用户
+     * @return {@link Users}
+     */
+    public Users createUser(UserBo user);
 }

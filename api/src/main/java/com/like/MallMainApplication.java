@@ -3,6 +3,7 @@ package com.like;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 /**
  * @author like
@@ -11,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 @MapperScan(basePackages = "com.like.mapper")
+@ComponentScan(basePackages = {"com.like", "org.n3r.idworker"})
 public class MallMainApplication {
     public static void main(String[] args) {
         SpringApplication.run(MallMainApplication.class, args);

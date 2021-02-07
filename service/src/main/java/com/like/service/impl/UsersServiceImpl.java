@@ -3,6 +3,7 @@ package com.like.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.like.mapper.UsersMapper;
 import com.like.pojo.Users;
+import com.like.pojo.bo.UserBo;
 import com.like.service.UsersService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,5 +38,13 @@ public class UsersServiceImpl implements UsersService {
         QueryWrapper<Users> query = new QueryWrapper<>();
         Users u = usersMapper.selectOne(query.eq("username", username));
         return u != null;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED) // 运行在事务中，如果没有就新创建一个
+    public Users createUser(UserBo user) {
+        Users u = new Users(user);
+        int insert = usersMapper.insert(u);
+        return insert == 1 ? u : null;
     }
 }
