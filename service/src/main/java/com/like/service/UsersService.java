@@ -27,4 +27,13 @@ public interface UsersService {
      * @return {@link Users}
      */
     public Users createUser(UserBo user);
+
+    /**
+     * 查询用户名和密码是否匹配
+     *
+     * @param username 用户名
+     * @param password 密码
+     * @return {@link Users}
+     */
+    public Users queryUserForLogin(String username, String password);
 }

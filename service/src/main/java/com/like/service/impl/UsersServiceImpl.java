@@ -11,9 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-
-import javax.annotation.Resource;
-
 /**
  * @author like
  * @email 980650920@qq.com
@@ -45,6 +42,16 @@ public class UsersServiceImpl implements UsersService {
     public Users createUser(UserBo user) {
         Users u = new Users(user);
         int insert = usersMapper.insert(u);
+
         return insert == 1 ? u : null;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS) // 有事务就加入，没有就算了
+    public Users queryUserForLogin(String username, String password) {
+        QueryWrapper<Users> query = new QueryWrapper<>();
+        query.eq("username", username).eq("password", password);
+
+        return usersMapper.selectOne(query);
     }
 }
