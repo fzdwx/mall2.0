@@ -24,7 +24,7 @@ public class PassportController {
     public HttpJSONResult usernameIsExist(@RequestParam String username) {
         if (StringUtils.isBlank(username)) return HttpJSONResult.errorMsg("用户名不能为空");
 
-        return usersService.queryUserNameIsExist(username) ? HttpJSONResult.ok() : HttpJSONResult.errorMsg("用户名不存在");
+        return !usersService.queryUserNameIsExist(username) ? HttpJSONResult.ok() : HttpJSONResult.errorMsg("用户名已经存在");
     }
 
     @PostMapping("/regist")
