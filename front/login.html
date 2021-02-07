@@ -115,7 +115,7 @@
                 // form提交
                 axios.defaults.withCredentials = true;
                 // console.log(axios.defaults);
-                axios.post(serverUrl + '/user/login', userBO)
+                axios.post(serverUrl + '/passport/login', userBO)
                     .then(res => {
                         if (res.data.status == 200) {
                             var user = res.data;
