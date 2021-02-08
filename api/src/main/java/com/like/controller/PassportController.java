@@ -38,7 +38,8 @@ public class PassportController {
 
     @PostMapping("/regist")
     @ApiOperation(value = "用户注册")
-    public HttpJSONResult regist(@RequestBody UserBo user) {
+    public HttpJSONResult regist(@RequestBody UserBo user, HttpServletRequest req,
+                                 HttpServletResponse reps) {
         String username = user.getUsername();
         String password = user.getPassword();
         String confirmPassword = user.getConfirmPassword();
@@ -59,7 +60,15 @@ public class PassportController {
         // 4. 注册
         Users u = usersService.createUser(user);
 
-        return u == null ? HttpJSONResult.errorMsg("用户数据保存失败，请稍后再试") : HttpJSONResult.ok();
+        if (u == null) return HttpJSONResult.errorMsg("用户数据保存失败，请稍后再试");
+
+        // 1.保护用户隐私信息
+        setNullProperty(u);
+
+        CookieUtils.setCookie(req, reps,
+                "user",
+                JsonUtils.objectToJson(u), true);
+        return HttpJSONResult.ok();
     }
 
     @PostMapping("/login")
