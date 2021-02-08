@@ -3,6 +3,7 @@ package com.like.controller;
 import com.like.pojo.Users;
 import com.like.pojo.bo.UserBo;
 import com.like.service.UsersService;
+import com.like.utils.DateUtil;
 import com.like.utils.HttpJSONResult;
 import com.like.utils.MD5Utils;
 import io.swagger.annotations.Api;
@@ -10,6 +11,9 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author like
@@ -60,7 +64,9 @@ public class PassportController {
 
     @PostMapping("/login")
     @ApiOperation(value = "用户登录")
-    public HttpJSONResult login(@RequestBody UserBo user) throws Exception {
+    public HttpJSONResult login(@RequestBody UserBo user,
+                                HttpServletRequest req,
+                                HttpServletResponse reps) throws Exception {
         String username = user.getUsername();
         String password = user.getPassword();
 
@@ -69,7 +75,25 @@ public class PassportController {
                 StringUtils.isBlank(password)) return HttpJSONResult.errorMsg("用户名和密码不能为空");
 
         Users u = usersService.queryUserForLogin(username, MD5Utils.getMD5Str(password));
-        return u == null ? HttpJSONResult.errorMsg("用户名或密码不正确") : HttpJSONResult.ok(u);
+
+        if (u == null) return HttpJSONResult.errorMsg("用户名或密码不正确,请检查后在试");
+
+        // 1.保护用户隐私信息
+        setNullProperty(u);
+
+        CookieUtils.setCookie(req, reps,
+                "user",
+                JsonUtils.objectToJson(u), true);
+        return HttpJSONResult.ok(u);
+    }
+
+    private void setNullProperty(Users u) {
+        u.setPassword("");
+        u.setMobile("");
+        u.setEmail("");
+        u.setBirthday(DateUtil.stringToDate(""));
+        u.setCreatedTime(DateUtil.stringToDate(""));
+        u.setUpdatedTime(DateUtil.stringToDate(""));
     }
 
 }
