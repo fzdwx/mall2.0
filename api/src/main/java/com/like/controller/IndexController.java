@@ -2,7 +2,9 @@ package com.like.controller;
 
 import com.like.enums.YesOrNo;
 import com.like.pojo.Carousel;
+import com.like.pojo.Category;
 import com.like.service.CarouselService;
+import com.like.service.CategoryService;
 import com.like.utils.HttpJSONResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,12 +27,21 @@ public class IndexController {
 
     @Autowired
     private CarouselService carouselService;
+    private CategoryService categoryService;
 
     @GetMapping("carousel")
     @ApiOperation(value = "获取首页轮播图列表")
     public HttpJSONResult carousel() {
-        List<Carousel> data = carouselService.queryAll(YesOrNo.YES.code);
+        List<Carousel> data = carouselService.queryAllRootLevelCat(YesOrNo.YES.code);
 
         return HttpJSONResult.ok(data);
     }
+
+    @GetMapping("cats")
+    @ApiOperation(value = "获取首页轮播图列表")
+    public HttpJSONResult cats() {
+        List<Category> data = categoryService.queryAllRootLevelCat();
+        return HttpJSONResult.ok(data);
+    }
+
 }

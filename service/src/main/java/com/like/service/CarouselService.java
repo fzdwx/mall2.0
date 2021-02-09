@@ -13,10 +13,10 @@ import java.util.List;
 public interface CarouselService {
 
     /**
-     * 查询所有轮播图列表
+     * 查询所有轮播图列表的跟节点
      *
      * @param isShow 是否显示
      * @return {@link List<Carousel>}
      */
-    public List<Carousel> queryAll(Integer isShow);
+    public List<Carousel> queryAllRootLevelCat(Integer isShow);
 }

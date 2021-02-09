@@ -1,8 +1,9 @@
-package com.like.service;
+package com.like.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.like.mapper.CarouselMapper;
 import com.like.pojo.Carousel;
+import com.like.service.CarouselService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,7 @@ public class CarouselServiceImpl implements CarouselService {
     private CarouselMapper carouselMapper;
 
     @Override
-    public List<Carousel> queryAll(Integer isShow) {
+    public List<Carousel> queryAllRootLevelCat(Integer isShow) {
         QueryWrapper<Carousel> query = new QueryWrapper<Carousel>()
                 .eq("is_show", isShow);
 
