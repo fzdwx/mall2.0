@@ -565,7 +565,7 @@
                 var serverUrl = app.serverUrl;
 
                 axios.defaults.withCredentials = true;
-                axios.get(serverUrl + '/user/logout?userId=' + userId, {})
+                axios.get(serverUrl + '/passport/logout?userId=' + userId, {})
                     .then(res => {
                         if (res.data.status == 200) {
                             window.location.href = "index.html";

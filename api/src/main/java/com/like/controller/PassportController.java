@@ -96,6 +96,20 @@ public class PassportController {
         return HttpJSONResult.ok(u);
     }
 
+    @PostMapping("/logout")
+    @ApiOperation(value = "用户退出登录")
+    public HttpJSONResult logout(@RequestParam String userId,
+                                 HttpServletRequest req,
+                                 HttpServletResponse reps) throws Exception {
+
+        // 清除用户对应的cookie
+        CookieUtils.deleteCookie(req, reps, "user");
+
+        // TODO: 2021/2/9 用户登录清除购物车 
+        // TODO: 2021/2/9 在分布式session中要清除数据
+        return HttpJSONResult.ok();
+    }
+
     private void setNullProperty(Users u) {
         u.setPassword("");
         u.setMobile("");
