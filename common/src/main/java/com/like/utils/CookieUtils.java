@@ -1,4 +1,4 @@
-package com.like.controller;
+package com.like.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package com.like.controller;
+package com.like.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
