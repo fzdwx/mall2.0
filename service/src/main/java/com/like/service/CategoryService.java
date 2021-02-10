@@ -1,6 +1,7 @@
 package com.like.service;
 
 import com.like.pojo.Category;
+import com.like.pojo.vo.CategoryVo;
 
 import java.util.List;
 
@@ -12,6 +13,19 @@ import java.util.List;
  */
 public interface CategoryService {
 
+    /**
+     * 查询所有一级分类
+     *
+     * @return {@link List<Category>}
+     */
     public List<Category> queryAllRootLevelCat();
+
+    /**
+     * 获取对应一级分类id下的子分类
+     *
+     * @param rootCatId 一级分类id
+     * @return {@link List<CategoryVo>}
+     */
+    public List<CategoryVo> getSubCatList(Integer rootCatId);
 
 }

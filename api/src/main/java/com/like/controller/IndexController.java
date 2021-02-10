@@ -3,6 +3,7 @@ package com.like.controller;
 import com.like.enums.YesOrNo;
 import com.like.pojo.Carousel;
 import com.like.pojo.Category;
+import com.like.pojo.vo.CategoryVo;
 import com.like.service.CarouselService;
 import com.like.service.CategoryService;
 import com.like.utils.HttpJSONResult;
@@ -10,6 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +29,7 @@ public class IndexController {
 
     @Autowired
     private CarouselService carouselService;
+    @Autowired
     private CategoryService categoryService;
 
     @GetMapping("carousel")
@@ -41,6 +44,15 @@ public class IndexController {
     @ApiOperation(value = "获取首页轮播图列表")
     public HttpJSONResult cats() {
         List<Category> data = categoryService.queryAllRootLevelCat();
+        return HttpJSONResult.ok(data);
+    }
+
+    @GetMapping("/subCat/{rootCatId}")
+    @ApiOperation(value = "获取一级分类下的子分类信息")
+    public HttpJSONResult subCat(@PathVariable(required = true) Integer rootCatId) {
+        if (rootCatId == null) return HttpJSONResult.errorMsg("分类不存在");
+
+        List<CategoryVo> data = categoryService.getSubCatList(rootCatId);
         return HttpJSONResult.ok(data);
     }
 

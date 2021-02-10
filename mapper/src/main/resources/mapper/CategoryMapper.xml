@@ -1,17 +1,44 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.like.mapper.CategoryMapper" >
-  <resultMap id="BaseResultMap" type="com.like.pojo.Category" >
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="name" property="name" jdbcType="VARCHAR" />
-    <result column="type" property="type" jdbcType="INTEGER" />
-    <result column="father_id" property="fatherId" jdbcType="INTEGER" />
-    <result column="logo" property="logo" jdbcType="VARCHAR" />
-    <result column="slogan" property="slogan" jdbcType="VARCHAR" />
-    <result column="cat_image" property="catImage" jdbcType="VARCHAR" />
-    <result column="bg_color" property="bgColor" jdbcType="VARCHAR" />
-  </resultMap>
+<mapper namespace="com.like.mapper.CategoryMapper">
+    <resultMap id="BaseResultMap" type="com.like.pojo.Category">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="father_id" property="fatherId" jdbcType="INTEGER"/>
+        <result column="logo" property="logo" jdbcType="VARCHAR"/>
+        <result column="slogan" property="slogan" jdbcType="VARCHAR"/>
+        <result column="cat_image" property="catImage" jdbcType="VARCHAR"/>
+        <result column="bg_color" property="bgColor" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="categoryVo" type="com.like.pojo.vo.CategoryVo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="fatherId" property="fatherId" jdbcType="INTEGER"/>
+        <collection property="subCategoryList" ofType="com.like.pojo.vo.SubCategoryVo">
+            <id column="subId" property="subId" jdbcType="INTEGER"/>
+            <result column="subName" property="subName" jdbcType="VARCHAR"/>
+            <result column="subType" property="subType" jdbcType="INTEGER"/>
+            <result column="subFatherId" property="subFatherId" jdbcType="INTEGER"/>
+        </collection>
+    </resultMap>
+    <select id="getSubCatList" resultType="categoryVo">
+        select f.id        as id,
+               f.name      as name,
+               f.type      as type,
+               f.father_id as fatherId,
+               c.id        as subId,
+               c.name      as subName,
+               c.type      as subType,
+               c.father_id as subFatherId
+        from category f
+                 left join category c
+                           on f.id = c.id
+        where f.father_id = #{rootCatId}
+    </select>
 </mapper>
