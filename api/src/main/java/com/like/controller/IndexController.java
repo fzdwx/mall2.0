@@ -4,6 +4,7 @@ import com.like.enums.YesOrNo;
 import com.like.pojo.Carousel;
 import com.like.pojo.Category;
 import com.like.pojo.vo.CategoryVo;
+import com.like.pojo.vo.NewItemsVo;
 import com.like.service.CarouselService;
 import com.like.service.CategoryService;
 import com.like.utils.HttpJSONResult;
@@ -56,4 +57,12 @@ public class IndexController {
         return HttpJSONResult.ok(data);
     }
 
+    @GetMapping("/sixNewItems/{rootCatId}")
+    @ApiOperation(value = "查询一级分类下的最新六条商品数据")
+    public HttpJSONResult getSixNewItemsByRootId(@PathVariable(required = true) Integer rootCatId) {
+        if (rootCatId == null) return HttpJSONResult.errorMsg("分类不存在");
+
+        List<NewItemsVo> data = categoryService.getSixNewItemsLazy(rootCatId);
+        return HttpJSONResult.ok(data);
+    }
 }

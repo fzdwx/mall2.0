@@ -2,6 +2,7 @@ package com.like.service;
 
 import com.like.pojo.Category;
 import com.like.pojo.vo.CategoryVo;
+import com.like.pojo.vo.NewItemsVo;
 
 import java.util.List;
 
@@ -28,4 +29,12 @@ public interface CategoryService {
      */
     public List<CategoryVo> getSubCatList(Integer rootCatId);
 
+
+    /**
+     * 查询每个分类下的6个商品数据作为推荐项
+     *
+     * @param rootCatId 主分类id
+     * @return {@link List<Object>}
+     */
+    public List<NewItemsVo> getSixNewItemsLazy(Integer rootCatId);
 }
