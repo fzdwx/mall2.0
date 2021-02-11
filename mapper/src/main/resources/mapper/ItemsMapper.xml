@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.like.mapper.ItemsMapper" >
-  <resultMap id="BaseResultMap" type="com.like.pojo.Items" >
-    <!--
-      WARNING - @mbg.generated
-    -->
-      <id column="id" property="id" jdbcType="VARCHAR"/>
-      <result column="item_name" property="itemName" jdbcType="VARCHAR"/>
-      <result column="cat_id" property="catId" jdbcType="INTEGER"/>
-      <result column="root_cat_id" property="rootCatId" jdbcType="INTEGER"/>
-      <result column="sell_counts" property="sellCounts" jdbcType="INTEGER"/>
-      <result column="on_off_status" property="onOffStatus" jdbcType="INTEGER"/>
-      <result column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
-      <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP"/>
-      <result column="content" property="content" jdbcType="LONGVARCHAR"/>
-  </resultMap>
-    <select id="queryItemComments" resultType="com.like.pojo.vo.ItemCommentVO">
+<mapper namespace="com.like.mapper.ItemsMapper">
+    <resultMap id="BaseResultMap" type="com.like.pojo.Items">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="item_name" property="itemName" jdbcType="VARCHAR"/>
+        <result column="cat_id" property="catId" jdbcType="INTEGER"/>
+        <result column="root_cat_id" property="rootCatId" jdbcType="INTEGER"/>
+        <result column="sell_counts" property="sellCounts" jdbcType="INTEGER"/>
+        <result column="on_off_status" property="onOffStatus" jdbcType="INTEGER"/>
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
+        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP"/>
+        <result column="content" property="content" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+    <select id="queryItemComments" parameterType="map" resultType="com.like.pojo.vo.ItemCommentVO">
         SELECT ic.comment_level commentLevel,
         ic.content content,
         ic.sepc_name sepcName,
@@ -28,5 +28,26 @@
         <if test="param.level != null and param.level !='' ">
             AND ic.comment_level = #{param.level}
         </if>
+    </select>
+
+    <select id="searchItems" parameterType="map" resultType="com.like.pojo.vo.SearchItemsVO">
+        SELECT
+        i.id itemId,
+        i.item_name itemName,
+        i.sell_counts sellCounts,
+        ii.url imgUrl,
+        tempSpec.price_discount price,
+        FROM items i
+        LEFT join items_img ii on i.id = ii.item_id
+        left join (
+        select item_id, min(price_discount) as price_discount
+        from items_spec
+        group by item_id
+        ) tempSpec on i.id = tempSpec.item_id
+        where ii.is_main = 1
+        <if test="param.keywords != null and param.keywords !='' ">
+            AND i.item_name like '%${param.keywords}%'
+        </if>
+        order by
     </select>
 </mapper>
