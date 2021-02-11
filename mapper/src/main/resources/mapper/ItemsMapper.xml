@@ -5,14 +5,28 @@
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="id" property="id" jdbcType="VARCHAR" />
-    <result column="item_name" property="itemName" jdbcType="VARCHAR" />
-    <result column="cat_id" property="catId" jdbcType="INTEGER" />
-    <result column="root_cat_id" property="rootCatId" jdbcType="INTEGER" />
-    <result column="sell_counts" property="sellCounts" jdbcType="INTEGER" />
-    <result column="on_off_status" property="onOffStatus" jdbcType="INTEGER" />
-    <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
-    <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
-    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+      <id column="id" property="id" jdbcType="VARCHAR"/>
+      <result column="item_name" property="itemName" jdbcType="VARCHAR"/>
+      <result column="cat_id" property="catId" jdbcType="INTEGER"/>
+      <result column="root_cat_id" property="rootCatId" jdbcType="INTEGER"/>
+      <result column="sell_counts" property="sellCounts" jdbcType="INTEGER"/>
+      <result column="on_off_status" property="onOffStatus" jdbcType="INTEGER"/>
+      <result column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
+      <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP"/>
+      <result column="content" property="content" jdbcType="LONGVARCHAR"/>
   </resultMap>
+    <select id="queryItemComments" resultType="com.like.pojo.vo.ItemCommentVO">
+        SELECT ic.comment_level commentLevel,
+        ic.content content,
+        ic.sepc_name sepcName,
+        ic.created_time createTime,
+        u.face userFace,
+        u.nickname nickName
+        FROM items_comments ic
+        LEFT join users u on ic.user_id = u.id
+        WHERE ic.item_id = #{param.itemId}
+        <if test="param.level != null and param.level !='' ">
+            AND ic.comment_level = 1
+        </if>
+    </select>
 </mapper>

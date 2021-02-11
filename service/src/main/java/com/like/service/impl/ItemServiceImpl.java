@@ -5,12 +5,14 @@ import com.like.enums.CommentLevel;
 import com.like.mapper.*;
 import com.like.pojo.*;
 import com.like.pojo.vo.CommentLevelCountsVO;
+import com.like.pojo.vo.ItemCommentVO;
 import com.like.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -72,6 +74,15 @@ public class ItemServiceImpl implements ItemService {
         Long totalCounts = goodCounts + normalCounts + badCounts;
 
         return new CommentLevelCountsVO(totalCounts, goodCounts, normalCounts, badCounts);
+    }
+
+    @Override
+    public List<ItemCommentVO> queryPagedComments(String itemId, Integer level) {
+        HashMap<String, Object> param = new HashMap<>();
+        param.put("itemId", itemId);
+        param.put("level", level);
+
+        return itemsMapper.queryItemComments(param);
     }
 
     /**

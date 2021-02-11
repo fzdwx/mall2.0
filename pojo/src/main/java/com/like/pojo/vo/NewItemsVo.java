@@ -1,5 +1,6 @@
 package com.like.pojo.vo;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -14,10 +15,10 @@ public class NewItemsVo {
     private String slogan;
     private String catImage;
     private String bgColor;
-    private String createTime;
+    private Date createTime;
     private List<SimpleItemVo> simpleItemList;
 
-    public NewItemsVo(Integer rootCatId, String rootCatName, String slogan, String catImage, String bgColor, String createTime, List<SimpleItemVo> simpleItemList) {
+    public NewItemsVo(Integer rootCatId, String rootCatName, String slogan, String catImage, String bgColor, Date createTime, List<SimpleItemVo> simpleItemList) {
         this.rootCatId = rootCatId;
         this.rootCatName = rootCatName;
         this.slogan = slogan;
@@ -30,11 +31,11 @@ public class NewItemsVo {
     public NewItemsVo() {
     }
 
-    public String getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(String createTime) {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
 

@@ -2,8 +2,15 @@ package com.like.mapper;
 
 import com.like.my.mapper.MyMapper;
 import com.like.pojo.Items;
+import com.like.pojo.vo.ItemCommentVO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface ItemsMapper extends MyMapper<Items> {
+
+    List<ItemCommentVO> queryItemComments(@Param("param") Map<String, Object> param);
 }
