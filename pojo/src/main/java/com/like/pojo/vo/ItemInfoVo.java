@@ -14,15 +14,15 @@ import java.util.List;
  */
 public class ItemInfoVo {
     private Items item;
-    private List<ItemsImg> imgs;
-    private List<ItemsSpec> specs;
-    private ItemsParam param;
+    private List<ItemsImg> itemImgList;
+    private List<ItemsSpec> itemSpecList;
+    private ItemsParam itemParams;
 
     public ItemInfoVo(Items item, List<ItemsImg> imgs, List<ItemsSpec> specs, ItemsParam param) {
         this.item = item;
-        this.imgs = imgs;
-        this.specs = specs;
-        this.param = param;
+        this.itemImgList = imgs;
+        this.itemSpecList = specs;
+        this.itemParams = param;
     }
 
     public ItemInfoVo() {
@@ -36,27 +36,27 @@ public class ItemInfoVo {
         this.item = item;
     }
 
-    public List<ItemsImg> getImgs() {
-        return imgs;
+    public List<ItemsImg> getItemImgList() {
+        return itemImgList;
     }
 
-    public void setImgs(List<ItemsImg> imgs) {
-        this.imgs = imgs;
+    public void setItemImgList(List<ItemsImg> itemImgList) {
+        this.itemImgList = itemImgList;
     }
 
-    public List<ItemsSpec> getSpecs() {
-        return specs;
+    public List<ItemsSpec> getItemSpecList() {
+        return itemSpecList;
     }
 
-    public void setSpecs(List<ItemsSpec> specs) {
-        this.specs = specs;
+    public void setItemSpecList(List<ItemsSpec> itemSpecList) {
+        this.itemSpecList = itemSpecList;
     }
 
-    public ItemsParam getParam() {
-        return param;
+    public ItemsParam getItemParams() {
+        return itemParams;
     }
 
-    public void setParam(ItemsParam param) {
-        this.param = param;
+    public void setItemParams(ItemsParam itemParams) {
+        this.itemParams = itemParams;
     }
 }
