@@ -10,6 +10,7 @@ import java.util.List;
 /**
  * @author like
  * @email 980650920@qq.com
+ * @Description: 返回商品信息的Vo
  * @since 2021-02-11 10:48
  */
 public class ItemInfoVo {

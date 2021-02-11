@@ -1,14 +1,10 @@
 package com.like.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.like.mapper.ItemsImgMapper;
-import com.like.mapper.ItemsMapper;
-import com.like.mapper.ItemsParamMapper;
-import com.like.mapper.ItemsSpecMapper;
-import com.like.pojo.Items;
-import com.like.pojo.ItemsImg;
-import com.like.pojo.ItemsParam;
-import com.like.pojo.ItemsSpec;
+import com.like.enums.CommentLevel;
+import com.like.mapper.*;
+import com.like.pojo.*;
+import com.like.pojo.vo.CommentLevelCountsVO;
 import com.like.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +12,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author like
@@ -33,6 +30,8 @@ public class ItemServiceImpl implements ItemService {
     private ItemsSpecMapper itemsSpecMapper;
     @Autowired
     private ItemsParamMapper itemsParamMapper;
+    @Autowired
+    private ItemsCommentsMapper itemsCommentsMapper;
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS)
@@ -60,4 +59,30 @@ public class ItemServiceImpl implements ItemService {
         QueryWrapper<ItemsParam> query = new QueryWrapper<ItemsParam>().eq("item_id", itemId);
         return itemsParamMapper.selectOne(query);
     }
+
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public CommentLevelCountsVO queryCommentCounts(String itemId) {
+        List<ItemsComments> rawList = itemsCommentsMapper.selectList(new QueryWrapper<ItemsComments>()
+                .eq("item_id", itemId));
+
+        Long goodCounts = getCommentCountsOfLevel(rawList, CommentLevel.GOOD.code);
+        Long normalCounts = getCommentCountsOfLevel(rawList, CommentLevel.NORMAL.code);
+        Long badCounts = getCommentCountsOfLevel(rawList, CommentLevel.BAD.code);
+        Long totalCounts = goodCounts + normalCounts + badCounts;
+
+        return new CommentLevelCountsVO(totalCounts, goodCounts, normalCounts, badCounts);
+    }
+
+    /**
+     * 根据传入的原始评论list找出和level对应的评论的个数
+     *
+     * @param rawList 原始列表
+     * @param level   水平
+     * @return {@link Long}
+     */
+    private Long getCommentCountsOfLevel(List<ItemsComments> rawList, Integer level) {
+        return rawList.stream().filter(c -> Objects.equals(c.getCommentLevel(), level)).count();
+    }
+
 }
