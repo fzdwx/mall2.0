@@ -32,7 +32,7 @@ public class ItemsController {
 
     @GetMapping("/info/{itemId}")
     @ApiOperation(value = "查询商品详情")
-    public HttpJSONResult itemInfoById(@PathVariable String itemId) {
+    public HttpJSONResult itemInfoById(@PathVariable(required = true) String itemId) {
         if (itemId == null) return HttpJSONResult.errorMsg("itemId不能为空");
 
         Items item = itemService.queryItemById(itemId);
