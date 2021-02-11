@@ -1,12 +1,15 @@
 package com.like.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.like.enums.CommentLevel;
 import com.like.mapper.*;
 import com.like.pojo.*;
 import com.like.pojo.vo.CommentLevelCountsVO;
 import com.like.pojo.vo.ItemCommentVO;
 import com.like.service.ItemService;
+import com.like.utils.PagedGridResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -77,12 +80,28 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemCommentVO> queryPagedComments(String itemId, Integer level) {
+    public PagedGridResult queryPagedComments(String itemId, Integer level, Integer page, Integer pageSize) {
         HashMap<String, Object> param = new HashMap<>();
         param.put("itemId", itemId);
         param.put("level", level);
 
-        return itemsMapper.queryItemComments(param);
+        PageHelper.startPage(page, pageSize);
+
+        List<ItemCommentVO> list = itemsMapper.queryItemComments(param);
+        PageInfo<?> pageInfo = new PageInfo<>(list);
+
+        PagedGridResult res = getPageResult(page, list, pageInfo);
+
+        return res;
+    }
+
+    private PagedGridResult getPageResult(Integer page, List<?> rows, PageInfo<?> pageInfo) {
+        PagedGridResult res = new PagedGridResult();
+        res.setPage(page);
+        res.setRows(rows);
+        res.setTotal(pageInfo.getPages());
+        res.setRecords(pageInfo.getTotal());
+        return res;
     }
 
     /**

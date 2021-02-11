@@ -46,4 +46,6 @@ mybatis-plus:
     banner: false
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-
+pagehelper:
+  helper-dialect: mysql
+  support-methods-arguments: true

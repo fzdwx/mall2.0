@@ -8,6 +8,7 @@ import com.like.pojo.vo.CommentLevelCountsVO;
 import com.like.pojo.vo.ItemInfoVo;
 import com.like.service.ItemService;
 import com.like.utils.HttpJSONResult;
+import com.like.utils.PagedGridResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping("items")
 @Api(value = "商品", tags = {"商品相关操作接口"})
-public class ItemsController {
+public class ItemsController extends BaseController {
 
     @Autowired
     private ItemService itemService;
@@ -50,6 +51,20 @@ public class ItemsController {
         CommentLevelCountsVO data = itemService.queryCommentCounts(itemId);
 
         return HttpJSONResult.ok(data);
+    }
+
+
+    @GetMapping("/comments")
+    @ApiOperation(value = "查询商品的评价")
+    public HttpJSONResult comments(@RequestParam String itemId, @RequestParam Integer level,
+                                   @RequestParam Integer page, @RequestParam Integer pageSize) {
+        if (itemId == null) return HttpJSONResult.errorMsg("itemId不能为空");
+        if (page == null) page = 1;
+        if (pageSize == null) pageSize = commentPageSize;
+
+        PagedGridResult res = itemService.queryPagedComments(itemId, level, page, pageSize);
+
+        return HttpJSONResult.ok(res);
     }
 }
 

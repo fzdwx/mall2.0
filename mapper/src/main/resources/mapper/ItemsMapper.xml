@@ -26,7 +26,7 @@
         LEFT join users u on ic.user_id = u.id
         WHERE ic.item_id = #{param.itemId}
         <if test="param.level != null and param.level !='' ">
-            AND ic.comment_level = 1
+            AND ic.comment_level = #{param.level}
         </if>
     </select>
 </mapper>

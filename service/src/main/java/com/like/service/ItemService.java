@@ -6,6 +6,7 @@ import com.like.pojo.ItemsParam;
 import com.like.pojo.ItemsSpec;
 import com.like.pojo.vo.CommentLevelCountsVO;
 import com.like.pojo.vo.ItemCommentVO;
+import com.like.utils.PagedGridResult;
 
 import java.util.List;
 
@@ -65,5 +66,5 @@ public interface ItemService {
      * @param level  评价等级 good normal bad
      * @return {@link List<ItemCommentVO>}
      */
-    public List<ItemCommentVO> queryPagedComments(String itemId, Integer level);
+    public PagedGridResult queryPagedComments(String itemId, Integer level, Integer page, Integer pageSize);
 }
