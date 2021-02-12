@@ -67,4 +67,18 @@ public interface ItemService {
      * @return {@link List<ItemCommentVO>}
      */
     public PagedGridResult queryPagedComments(String itemId, Integer level, Integer page, Integer pageSize);
+
+    /**
+     * 搜索商品信息
+     * k 默认 根据name
+     * c 根据销量
+     * p 根据价格
+     *
+     * @param keywords 关键字
+     * @param sort     排序
+     * @param page     页面
+     * @param pageSize 页面大小
+     * @return {@link PagedGridResult}
+     */
+    public PagedGridResult searchItems(String keywords, String sort, Integer page, Integer pageSize);
 }

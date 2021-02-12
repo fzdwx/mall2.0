@@ -8,6 +8,7 @@ import com.like.mapper.*;
 import com.like.pojo.*;
 import com.like.pojo.vo.CommentLevelCountsVO;
 import com.like.pojo.vo.ItemCommentVO;
+import com.like.pojo.vo.SearchItemsVO;
 import com.like.service.ItemService;
 import com.like.utils.DesensitizationUtil;
 import com.like.utils.PagedGridResult;
@@ -98,6 +99,20 @@ public class ItemServiceImpl implements ItemService {
         PageInfo<?> pageInfo = new PageInfo<>(list);
 
         return getPageResult(page, list, pageInfo);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public PagedGridResult searchItems(String keywords, String sort, Integer page, Integer pageSize) {
+        HashMap<String, Object> param = new HashMap<>();
+        param.put("keywords", keywords);
+        param.put("sort", sort);
+
+        PageHelper.startPage(page, pageSize);
+        List<SearchItemsVO> rawList = itemsMapper.searchItems(param);
+
+        PageInfo<?> pageInfo = new PageInfo<>(rawList);
+        return getPageResult(page, rawList, pageInfo);
     }
 
     private PagedGridResult getPageResult(Integer page, List<?> rows, PageInfo<?> pageInfo) {

@@ -49,5 +49,16 @@
             AND i.item_name like '%${param.keywords}%'
         </if>
         order by
+        <choose>
+            <when test="param.sort == &quot;c&quot;">
+                i.sell_counts desc
+            </when>
+            <when test="param.sort == &quot;p&quot;">
+                tempSpec.price_discount asc
+            </when>
+            <otherwise>
+                i.item_Name asc
+            </otherwise>
+        </choose>
     </select>
 </mapper>

@@ -60,9 +60,23 @@ public class ItemsController extends BaseController {
                                    @RequestParam Integer page, @RequestParam Integer pageSize) {
         if (itemId == null) return HttpJSONResult.errorMsg("itemId不能为空");
         if (page == null) page = 1;
-        if (pageSize == null) pageSize = commentPageSize;
+        if (pageSize == null) pageSize = PAGESIZE;
 
         PagedGridResult res = itemService.queryPagedComments(itemId, level, page, pageSize);
+
+        return HttpJSONResult.ok(res);
+    }
+
+
+    @GetMapping("/search")
+    @ApiOperation(value = "搜索商品信息")
+    public HttpJSONResult searchItems(@RequestParam String keywords, @RequestParam String sort,
+                                      @RequestParam Integer page, @RequestParam Integer pageSize) {
+        if (keywords == null) return HttpJSONResult.errorMsg("关键字不能为空");
+        if (page == null) page = 1;
+        if (pageSize == null) pageSize = PAGESIZE;
+
+        PagedGridResult res = itemService.searchItems(keywords, sort, page, pageSize);
 
         return HttpJSONResult.ok(res);
     }

@@ -10,5 +10,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class BaseController {
 
-    public static final Integer commentPageSize = 10;
+    public static final Integer PAGESIZE = 10;
 }
