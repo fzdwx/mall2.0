@@ -69,7 +69,7 @@ public class ItemsController extends BaseController {
 
 
     @GetMapping("/search")
-    @ApiOperation(value = "搜索商品信息")
+    @ApiOperation(value = "搜索商品信息列表")
     public HttpJSONResult searchItems(@RequestParam String keywords, @RequestParam String sort,
                                       @RequestParam Integer page, @RequestParam Integer pageSize) {
         if (keywords == null) return HttpJSONResult.errorMsg("关键字不能为空");
@@ -77,6 +77,20 @@ public class ItemsController extends BaseController {
         if (pageSize == null) pageSize = PAGESIZE;
 
         PagedGridResult res = itemService.searchItems(keywords, sort, page, pageSize);
+
+        return HttpJSONResult.ok(res);
+    }
+
+
+    @GetMapping("/catItems")
+    @ApiOperation(value = "根据三级分类返回商品信息列表")
+    public HttpJSONResult searchItemsByThirdCategory(@RequestParam Integer catId, @RequestParam String sort,
+                                                     @RequestParam Integer page, @RequestParam Integer pageSize) {
+        if (catId == null) return HttpJSONResult.errorMsg("三级分类id不能为空");
+        if (page == null) page = 1;
+        if (pageSize == null) pageSize = PAGESIZE;
+
+        PagedGridResult res = itemService.searchItemsByThirdCategory(catId, sort, page, pageSize);
 
         return HttpJSONResult.ok(res);
     }

@@ -16,4 +16,6 @@ public interface ItemsMapper extends MyMapper<Items> {
     List<ItemCommentVO> queryItemComments(@Param("param") Map<String, Object> param);
 
     List<SearchItemsVO> searchItems(@Param("param") Map<String, Object> param);
+
+    List<SearchItemsVO> searchItemsByThirdCategory(@Param("param") Map<String, Object> param);
 }
