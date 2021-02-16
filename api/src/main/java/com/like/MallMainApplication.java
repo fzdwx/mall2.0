@@ -11,7 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
  * @since 2021-02-05 17:02
  */
 @SpringBootApplication
-@MapperScan(basePackages = "com.like.mapper")
+@MapperScan(basePackages = "com.like")
 @ComponentScan(basePackages = {"com.like", "org.n3r.idworker"})
 public class MallMainApplication {
     public static void main(String[] args) {
