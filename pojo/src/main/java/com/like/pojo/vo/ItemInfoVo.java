@@ -1,6 +1,5 @@
 package com.like.pojo.vo;
 
-import com.like.pojo.Items;
 import com.like.pojo.ItemsImg;
 import com.like.pojo.ItemsParam;
 import com.like.pojo.ItemsSpec;

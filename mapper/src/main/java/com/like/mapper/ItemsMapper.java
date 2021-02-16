@@ -1,7 +1,6 @@
 package com.like.mapper;
 
 import com.like.my.mapper.MyMapper;
-import com.like.pojo.Items;
 import com.like.pojo.vo.ItemCommentVO;
 import com.like.pojo.vo.SearchItemsVO;
 import org.apache.ibatis.annotations.Mapper;

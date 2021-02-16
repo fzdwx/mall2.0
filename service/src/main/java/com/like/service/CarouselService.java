@@ -19,4 +19,5 @@ public interface CarouselService {
      * @return {@link List<Carousel>}
      */
     public List<Carousel> queryAllRootLevelCat(Integer isShow);
+
 }
