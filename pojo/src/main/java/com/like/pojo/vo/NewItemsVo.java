@@ -15,7 +15,7 @@ public class NewItemsVo {
     private String slogan;
     private String catImage;
     private String bgColor;
-    private Date createTime;
+    private Date createdTime;
     private List<SimpleItemVo> simpleItemList;
 
     public NewItemsVo(Integer rootCatId, String rootCatName, String slogan, String catImage, String bgColor, Date createTime, List<SimpleItemVo> simpleItemList) {
@@ -24,7 +24,7 @@ public class NewItemsVo {
         this.slogan = slogan;
         this.catImage = catImage;
         this.bgColor = bgColor;
-        this.createTime = createTime;
+        this.createdTime = createTime;
         this.simpleItemList = simpleItemList;
     }
 
@@ -32,11 +32,11 @@ public class NewItemsVo {
     }
 
     public Date getCreateTime() {
-        return createTime;
+        return createdTime;
     }
 
     public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
+        this.createdTime = createTime;
     }
 
     public Integer getRootCatId() {
