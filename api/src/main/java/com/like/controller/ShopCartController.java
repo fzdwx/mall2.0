@@ -8,6 +8,7 @@ import com.like.utils.HttpJSONResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +39,20 @@ public class ShopCartController {
         if (StrUtil.isBlank(userId)) return HttpJSONResult.errorMsg("user Id 不能为空");
         log.info("购物车数据:{}", shopCart);
         // TODO: 2021/2/16 前端用户在登录的时候，添加商品上购物车，会同时在后端同步购物车到redis中
+
+        HttpSession session = request.getSession();
+        return HttpJSONResult.ok();
+    }
+
+    @PostMapping("/del")
+    @ApiOperation(value = "从购物车中删除商品")
+    public HttpJSONResult del(@RequestParam String userId, @RequestParam String itemSpecId,
+                              HttpServletRequest request,
+                              HttpServletResponse response) {
+        if (StringUtils.isBlank(userId) || StringUtils.isBlank(itemSpecId))
+            return HttpJSONResult.errorMsg("请求参数不完整");
+        log.info("用户id:{}-删除商品规格id:{}", userId, itemSpecId);
+        // TODO: 2021/2/16 如果用户已经登录，则需要同步删除后端购物车中的商品
 
         HttpSession session = request.getSession();
         return HttpJSONResult.ok();
