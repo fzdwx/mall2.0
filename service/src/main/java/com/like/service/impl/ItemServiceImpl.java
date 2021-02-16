@@ -1,8 +1,9 @@
 package com.like.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.like.enums.CommentLevel;
 import com.like.mapper.*;
 import com.like.pojo.*;
@@ -11,7 +12,6 @@ import com.like.pojo.vo.ItemCommentVO;
 import com.like.pojo.vo.SearchItemsVO;
 import com.like.service.ItemService;
 import com.like.utils.DesensitizationUtil;
-import com.like.utils.PagedGridResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -27,7 +27,7 @@ import java.util.Objects;
  * @since 2021-02-11 10:24
  */
 @Service
-public class ItemServiceImpl implements ItemService {
+public class ItemServiceImpl extends ServiceImpl<ItemsMapper, Items> implements ItemService {
 
     @Autowired
     private ItemsMapper itemsMapper;
@@ -82,59 +82,45 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public PagedGridResult queryPagedComments(String itemId, Integer level, Integer page, Integer pageSize) {
+    public IPage<ItemCommentVO> queryPagedComments(String itemId, Integer level, Integer page, Integer pageSize) {
         HashMap<String, Object> param = new HashMap<>();
         param.put("itemId", itemId);
         param.put("level", level);
 
-        PageHelper.startPage(page, pageSize);
-
-        List<ItemCommentVO> list = itemsMapper.queryItemComments(param);
+        Page<ItemCommentVO> p = new Page<>(page, pageSize);
+        IPage<ItemCommentVO> ipage = itemsMapper.queryItemComments(p, param);
 
         // 对每个用户名进行脱敏
-        for (ItemCommentVO comment : list) {
+        for (ItemCommentVO comment : ipage.getRecords()) {
             comment.setNickName(DesensitizationUtil.commonDisplay(comment.getNickName()));
         }
 
-        PageInfo<?> pageInfo = new PageInfo<>(list);
 
-        return getPageResult(page, list, pageInfo);
+        return ipage;
     }
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS)
-    public PagedGridResult searchItems(String keywords, String sort, Integer page, Integer pageSize) {
+    public IPage<SearchItemsVO> searchItems(String keywords, String sort, Integer page, Integer pageSize) {
         HashMap<String, Object> param = new HashMap<>();
         param.put("keywords", keywords);
         param.put("sort", sort);
 
-        PageHelper.startPage(page, pageSize);
-        List<SearchItemsVO> rawList = itemsMapper.searchItems(param);
+        Page<SearchItemsVO> p = new Page<>(page, pageSize);
 
-        PageInfo<?> pageInfo = new PageInfo<>(rawList);
-        return getPageResult(page, rawList, pageInfo);
+
+        return itemsMapper.searchItems(p, param);
     }
 
     @Override
-    public PagedGridResult searchItemsByThirdCategory(Integer catId, String sort, Integer page, Integer pageSize) {
+    public IPage<SearchItemsVO> searchItemsByThirdCategory(Integer catId, String sort, Integer page, Integer pageSize) {
         HashMap<String, Object> param = new HashMap<>();
         param.put("catId", catId);
         param.put("sort", sort);
 
-        PageHelper.startPage(page, pageSize);
-        List<SearchItemsVO> rawList = itemsMapper.searchItems(param);
+        Page<SearchItemsVO> p = new Page<>(page, pageSize);
 
-        PageInfo<?> pageInfo = new PageInfo<>(rawList);
-        return getPageResult(page, rawList, pageInfo);
-    }
-
-    private PagedGridResult getPageResult(Integer page, List<?> rows, PageInfo<?> pageInfo) {
-        PagedGridResult res = new PagedGridResult();
-        res.setPage(page);
-        res.setRows(rows);
-        res.setTotal(pageInfo.getPages());
-        res.setRecords(pageInfo.getTotal());
-        return res;
+        return itemsMapper.searchItems(p, param);
     }
 
     /**
@@ -147,5 +133,4 @@ public class ItemServiceImpl implements ItemService {
     private Long getCommentCountsOfLevel(List<ItemsComments> rawList, Integer level) {
         return rawList.stream().filter(c -> Objects.equals(c.getCommentLevel(), level)).count();
     }
-
 }

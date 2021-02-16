@@ -4,12 +4,19 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.like.enums.Sex;
+import com.like.pojo.bo.UserBo;
+import com.like.utils.DateUtil;
+import com.like.utils.MD5Utils;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.n3r.idworker.Sid;
 
 import java.io.Serializable;
 import java.util.Date;
+
+import static com.like.utils.DateUtil.ISO_EXPANDED_DATE_FORMAT;
 
 /**
  * Created by Mybatis Generator 2021/02/16
@@ -19,6 +26,7 @@ import java.util.Date;
 @TableName(value = "users")
 public class Users implements Serializable {
     private static final long serialVersionUID = 1L;
+    public static final String DEFAULT_FACE_URL = "https://i1.hdslb.com/bfs/face/c6679005eb3ccd47bf1d3a1a4a45622541ff2a59.jpg@140w_140h_1c.webp";
     public static final String COL_USERNAME = "username";
     public static final String COL_PASSWORD = "password";
     public static final String COL_NICKNAME = "nickname";
@@ -102,4 +110,25 @@ public class Users implements Serializable {
     @TableField(value = "updated_time")
     @ApiModelProperty(value = "更新时间 更新时间")
     private Date updatedTime;
+
+    public Users(UserBo user) {
+        this(user.getUsername(), user.getPassword());
+    }
+
+    public Users(String username, String password) {
+        this.id = Sid.next();
+        this.username = username;
+        try {
+            this.password = MD5Utils.getMD5Str(password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        this.nickname = username;
+        this.realname = username;
+        this.sex = Sex.secret.code;
+        this.face = DEFAULT_FACE_URL;
+        this.createdTime = new Date();
+        this.updatedTime = new Date();
+        this.birthday = DateUtil.stringToDate("1970-01-01", ISO_EXPANDED_DATE_FORMAT);
+    }
 }

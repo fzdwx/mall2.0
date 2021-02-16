@@ -1,5 +1,6 @@
 package com.like.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.like.pojo.Carousel;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
  * @Description: 轮播图
  * @since 2021-02-09 16:47
  */
-public interface CarouselService {
+public interface CarouselService extends IService<Carousel> {
 
     /**
      * 查询所有轮播图列表的跟节点

@@ -1,6 +1,7 @@
 package com.like.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.like.enums.CategoryLevel;
 import com.like.mapper.CategoryMapper;
 import com.like.pojo.Category;
@@ -21,7 +22,7 @@ import java.util.List;
  * @since 2021-02-09 17:38
  */
 @Service
-public class CategoryServiceImpl implements CategoryService {
+public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> implements CategoryService {
 
     @Autowired
     private CategoryMapper categoryMapper;

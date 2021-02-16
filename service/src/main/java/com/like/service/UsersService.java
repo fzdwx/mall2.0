@@ -1,5 +1,6 @@
 package com.like.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.like.pojo.Users;
 import com.like.pojo.bo.UserBo;
 import org.apache.ibatis.annotations.Param;
@@ -9,7 +10,7 @@ import org.apache.ibatis.annotations.Param;
  * @email 980650920@qq.com
  * @since 2021-02-06 17:24
  */
-public interface UsersService {
+public interface UsersService extends IService<Users> {
 
 
     /**

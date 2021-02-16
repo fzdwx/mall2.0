@@ -1,5 +1,6 @@
 package com.like.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.like.pojo.Category;
 import com.like.pojo.vo.CategoryVo;
 import com.like.pojo.vo.NewItemsVo;
@@ -12,7 +13,7 @@ import java.util.List;
  * @Description: 首页分类展示
  * @since 2021-02-09 17:37
  */
-public interface CategoryService {
+public interface CategoryService extends IService<Category> {
 
     /**
      * 查询所有一级分类

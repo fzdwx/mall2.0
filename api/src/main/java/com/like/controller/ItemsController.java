@@ -1,14 +1,16 @@
 package com.like.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.like.pojo.Items;
 import com.like.pojo.ItemsImg;
 import com.like.pojo.ItemsParam;
 import com.like.pojo.ItemsSpec;
 import com.like.pojo.vo.CommentLevelCountsVO;
+import com.like.pojo.vo.ItemCommentVO;
 import com.like.pojo.vo.ItemInfoVo;
+import com.like.pojo.vo.SearchItemsVO;
 import com.like.service.ItemService;
 import com.like.utils.HttpJSONResult;
-import com.like.utils.PagedGridResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +64,7 @@ public class ItemsController extends BaseController {
         if (page == null) page = 1;
         if (pageSize == null) pageSize = PAGESIZE;
 
-        PagedGridResult res = itemService.queryPagedComments(itemId, level, page, pageSize);
+        IPage<ItemCommentVO> res = itemService.queryPagedComments(itemId, level, page, pageSize);
 
         return HttpJSONResult.ok(res);
     }
@@ -76,9 +78,9 @@ public class ItemsController extends BaseController {
         if (page == null) page = 1;
         if (pageSize == null) pageSize = PAGESIZE;
 
-        PagedGridResult res = itemService.searchItems(keywords, sort, page, pageSize);
+        IPage<SearchItemsVO> p = itemService.searchItems(keywords, sort, page, pageSize);
 
-        return HttpJSONResult.ok(res);
+        return HttpJSONResult.ok(p);
     }
 
 
@@ -90,9 +92,9 @@ public class ItemsController extends BaseController {
         if (page == null) page = 1;
         if (pageSize == null) pageSize = PAGESIZE;
 
-        PagedGridResult res = itemService.searchItemsByThirdCategory(catId, sort, page, pageSize);
+        IPage<SearchItemsVO> p = itemService.searchItemsByThirdCategory(catId, sort, page, pageSize);
 
-        return HttpJSONResult.ok(res);
+        return HttpJSONResult.ok(p);
     }
 }
 

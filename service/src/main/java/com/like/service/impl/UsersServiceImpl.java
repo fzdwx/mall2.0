@@ -1,6 +1,7 @@
 package com.like.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.like.mapper.UsersMapper;
 import com.like.pojo.Users;
 import com.like.pojo.bo.UserBo;
@@ -18,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Slf4j
-public class UsersServiceImpl implements UsersService {
+public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements UsersService {
 
     @Autowired
     private UsersMapper usersMapper;

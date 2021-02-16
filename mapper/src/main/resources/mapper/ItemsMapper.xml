@@ -36,7 +36,7 @@
         i.item_name itemName,
         i.sell_counts sellCounts,
         ii.url imgUrl,
-        tempSpec.price_discount price,
+        tempSpec.price_discount price
         FROM items i
         LEFT join items_img ii on i.id = ii.item_id
         left join (

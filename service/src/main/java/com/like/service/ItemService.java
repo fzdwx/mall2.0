@@ -1,11 +1,14 @@
 package com.like.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.like.pojo.Items;
 import com.like.pojo.ItemsImg;
 import com.like.pojo.ItemsParam;
 import com.like.pojo.ItemsSpec;
 import com.like.pojo.vo.CommentLevelCountsVO;
 import com.like.pojo.vo.ItemCommentVO;
+import com.like.pojo.vo.SearchItemsVO;
 import com.like.utils.PagedGridResult;
 
 import java.util.List;
@@ -15,7 +18,7 @@ import java.util.List;
  * @email 980650920@qq.com
  * @since 2021-02-11 10:22
  */
-public interface ItemService {
+public interface ItemService extends IService<Items> {
 
     /**
      * 根据商品id查询详情
@@ -66,7 +69,7 @@ public interface ItemService {
      * @param level  评价等级 good normal bad
      * @return {@link List<ItemCommentVO>}
      */
-    public PagedGridResult queryPagedComments(String itemId, Integer level, Integer page, Integer pageSize);
+    public IPage<ItemCommentVO> queryPagedComments(String itemId, Integer level, Integer page, Integer pageSize);
 
     /**
      * 搜索商品信息
@@ -80,7 +83,7 @@ public interface ItemService {
      * @param pageSize 页面大小
      * @return {@link PagedGridResult}
      */
-    public PagedGridResult searchItems(String keywords, String sort, Integer page, Integer pageSize);
+    public IPage<SearchItemsVO> searchItems(String keywords, String sort, Integer page, Integer pageSize);
 
     /**
      * 根据三级分类id搜索商品信息
@@ -91,5 +94,5 @@ public interface ItemService {
      * @param pageSize 页面大小
      * @return {@link PagedGridResult}
      */
-    public PagedGridResult searchItemsByThirdCategory(Integer catId, String sort, Integer page, Integer pageSize);
+    public IPage<SearchItemsVO> searchItemsByThirdCategory(Integer catId, String sort, Integer page, Integer pageSize);
 }

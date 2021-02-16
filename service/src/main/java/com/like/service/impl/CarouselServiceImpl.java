@@ -1,6 +1,7 @@
 package com.like.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.like.mapper.CarouselMapper;
 import com.like.pojo.Carousel;
 import com.like.service.CarouselService;
@@ -15,7 +16,7 @@ import java.util.List;
  * @since 2021-02-09 16:49
  */
 @Service
-public class CarouselServiceImpl implements CarouselService {
+public class CarouselServiceImpl extends ServiceImpl<CarouselMapper, Carousel> implements CarouselService {
     @Autowired
     private CarouselMapper carouselMapper;
 
