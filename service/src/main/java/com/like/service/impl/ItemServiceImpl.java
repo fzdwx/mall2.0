@@ -10,6 +10,7 @@ import com.like.pojo.*;
 import com.like.pojo.vo.CommentLevelCountsVO;
 import com.like.pojo.vo.ItemCommentVO;
 import com.like.pojo.vo.SearchItemsVO;
+import com.like.pojo.vo.ShopCartVO;
 import com.like.service.ItemService;
 import com.like.utils.DesensitizationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -113,6 +115,7 @@ public class ItemServiceImpl extends ServiceImpl<ItemsMapper, Items> implements 
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public IPage<SearchItemsVO> searchItemsByThirdCategory(Integer catId, String sort, Integer page, Integer pageSize) {
         HashMap<String, Object> param = new HashMap<>();
         param.put("catId", catId);
@@ -121,6 +124,14 @@ public class ItemServiceImpl extends ServiceImpl<ItemsMapper, Items> implements 
         Page<SearchItemsVO> p = new Page<>(page, pageSize);
 
         return itemsMapper.searchItems(p, param);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public List<ShopCartVO> queryItemsBySpecId(String specIds) {
+        List<String> ids = Arrays.asList(specIds.split(","));
+
+        return itemsMapper.queryItemsBySpecId(ids);
     }
 
     /**

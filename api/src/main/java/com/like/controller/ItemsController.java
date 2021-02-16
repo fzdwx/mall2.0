@@ -62,7 +62,7 @@ public class ItemsController extends BaseController {
                                    @RequestParam Integer page, @RequestParam Integer pageSize) {
         if (itemId == null) return HttpJSONResult.errorMsg("itemId不能为空");
         if (page == null) page = 1;
-        if (pageSize == null) pageSize = PAGESIZE;
+        if (pageSize == null) pageSize = DEFAULT_PAGESIZE;
 
         IPage<ItemCommentVO> res = itemService.queryPagedComments(itemId, level, page, pageSize);
 
@@ -76,7 +76,7 @@ public class ItemsController extends BaseController {
                                       @RequestParam Integer page, @RequestParam Integer pageSize) {
         if (keywords == null) return HttpJSONResult.errorMsg("关键字不能为空");
         if (page == null) page = 1;
-        if (pageSize == null) pageSize = PAGESIZE;
+        if (pageSize == null) pageSize = DEFAULT_PAGESIZE;
 
         IPage<SearchItemsVO> p = itemService.searchItems(keywords, sort, page, pageSize);
 
@@ -90,7 +90,7 @@ public class ItemsController extends BaseController {
                                                      @RequestParam Integer page, @RequestParam Integer pageSize) {
         if (catId == null) return HttpJSONResult.errorMsg("三级分类id不能为空");
         if (page == null) page = 1;
-        if (pageSize == null) pageSize = PAGESIZE;
+        if (pageSize == null) pageSize = DEFAULT_PAGESIZE;
 
         IPage<SearchItemsVO> p = itemService.searchItemsByThirdCategory(catId, sort, page, pageSize);
 

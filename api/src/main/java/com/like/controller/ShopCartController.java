@@ -1,12 +1,20 @@
 package com.like.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.like.pojo.bo.ShopCartBO;
+import com.like.pojo.vo.ShopCartVO;
+import com.like.service.ItemService;
 import com.like.utils.HttpJSONResult;
 import io.swagger.annotations.Api;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  * @author like
@@ -15,12 +23,36 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @Api(value = "购物车接口")
 @RequestMapping("shopcart")
+@Slf4j
+@RestController
 public class ShopCartController {
 
+    @Autowired
+    private ItemService itemService;
 
-    @GetMapping("/add")
-    public HttpJSONResult add(@RequestParam String userId, @RequestBody ShopCartBO shopCart) {
+    @PostMapping("/add")
+    @ApiOperation(value = "添加商品到购物车")
+    public HttpJSONResult add(@RequestParam String userId, @RequestBody ShopCartBO shopCart,
+                              HttpServletRequest request,
+                              HttpServletResponse response) {
+        if (StrUtil.isBlank(userId)) return HttpJSONResult.errorMsg("user Id 不能为空");
+        log.info("购物车数据:{}", shopCart);
+        // TODO: 2021/2/16 前端用户在登录的时候，添加商品上购物车，会同时在后端同步购物车到redis中
 
+        HttpSession session = request.getSession();
         return HttpJSONResult.ok();
+    }
+
+    /**
+     * 用于用户长时间未登录网站 刷新购物车中的数据
+     */
+    @GetMapping("/refresh/{itemSpecIds}")
+    @ApiOperation(value = "根据商品规格的id list 查询对应的商品信息")
+    public HttpJSONResult refresh(@PathVariable String itemSpecIds) {
+        System.out.println("1");
+        log.info("商品规格id列表:{}", itemSpecIds);
+        if (StrUtil.isBlank(itemSpecIds)) return HttpJSONResult.ok();
+        List<ShopCartVO> data = itemService.queryItemsBySpecId(itemSpecIds);
+        return HttpJSONResult.ok(data);
     }
 }

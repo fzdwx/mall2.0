@@ -91,4 +91,23 @@
             </otherwise>
         </choose>
     </select>
+
+    <select id="queryItemsBySpecId" parameterType="list" resultType="shopCartVO">
+        select
+        i.id itemId,
+        ii.url itemImgUrl,
+        i.item_name itemName,
+        isp.id specId,
+        isp.name specName,
+        isp.price_discount priceDiscount,
+        isp.price_normal priceNormal
+        from items_spec isp
+        left join items i on isp.item_id = i.id
+        left join items_img ii on i.id = ii.item_id
+        where ii.is_main =1 and isp.id
+        in
+        <foreach collection="param" index="index" item="specId" open="(" close=")" separator=",">
+            #{specId}
+        </foreach>
+    </select>
 </mapper>

@@ -6,6 +6,7 @@ import com.like.my.mapper.MyMapper;
 import com.like.pojo.Items;
 import com.like.pojo.vo.ItemCommentVO;
 import com.like.pojo.vo.SearchItemsVO;
+import com.like.pojo.vo.ShopCartVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -20,4 +21,6 @@ public interface ItemsMapper extends MyMapper<Items> {
     IPage<SearchItemsVO> searchItems(Page<SearchItemsVO> p, @Param("param") Map<String, Object> param);
 
     List<SearchItemsVO> searchItemsByThirdCategory(@Param("param") Map<String, Object> param);
+
+    List<ShopCartVO> queryItemsBySpecId(@Param("param") List<String> specIds);
 }

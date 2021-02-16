@@ -422,7 +422,7 @@
                 var serverUrl = app.serverUrl;
                 axios.defaults.withCredentials = true;
                 axios.get(
-                    serverUrl + '/shopcart/refresh?itemSpecIds=' + itemSpecIds,
+                    serverUrl + '/shopcart/refresh/' + itemSpecIds,
                     {},)
                     .then(res => {
                         if (res.data.status == 200) {

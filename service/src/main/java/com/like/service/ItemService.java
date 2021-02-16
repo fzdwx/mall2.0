@@ -9,6 +9,7 @@ import com.like.pojo.ItemsSpec;
 import com.like.pojo.vo.CommentLevelCountsVO;
 import com.like.pojo.vo.ItemCommentVO;
 import com.like.pojo.vo.SearchItemsVO;
+import com.like.pojo.vo.ShopCartVO;
 import com.like.utils.PagedGridResult;
 
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.List;
  * @email 980650920@qq.com
  * @since 2021-02-11 10:22
  */
+
 public interface ItemService extends IService<Items> {
 
     /**
@@ -95,4 +97,12 @@ public interface ItemService extends IService<Items> {
      * @return {@link PagedGridResult}
      */
     public IPage<SearchItemsVO> searchItemsByThirdCategory(Integer catId, String sort, Integer page, Integer pageSize);
+
+    /**
+     * 根据规格的id list 查询商品的数据（渲染购物车中的商品数据）
+     *
+     * @param specIds 规范标识
+     * @return {@link IPage<ShopCartVO>}
+     */
+    public List<ShopCartVO> queryItemsBySpecId(String specIds);
 }

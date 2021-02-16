@@ -10,5 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class BaseController {
 
-    public static final Integer PAGESIZE = 10;
+    /**
+     * 默认分页大小
+     */
+    public static final Integer DEFAULT_PAGESIZE = 10;
 }

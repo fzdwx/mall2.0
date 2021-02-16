@@ -91,6 +91,9 @@ public class PassportController {
         CookieUtils.setCookie(req, reps,
                 "user",
                 JsonUtils.objectToJson(u), true);
+
+        // TODO: 2021/2/16 生成用户token 存入redis会话
+        // TODO: 2021/2/16 同步购物车数据
         return HttpJSONResult.ok(u);
     }
 
