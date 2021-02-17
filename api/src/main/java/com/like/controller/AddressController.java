@@ -1,17 +1,16 @@
 package com.like.controller;
 
 import com.like.pojo.UserAddress;
+import com.like.pojo.bo.AddressBO;
 import com.like.service.AddressService;
 import com.like.utils.HttpJSONResult;
+import com.like.utils.MobileEmailUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -45,5 +44,44 @@ public class AddressController {
         List<UserAddress> data = addressService.queryAll(userId);
 
         return HttpJSONResult.ok(data);
+    }
+
+    @PostMapping("/add")
+    @ApiOperation(value = "用户添加地址")
+    public HttpJSONResult add(@RequestBody AddressBO address) {
+        HttpJSONResult checkRes = checkAddress(address);
+        if (checkRes.getStatus() != 200) {
+            return checkRes;
+        }
+        log.info("用户新增地址：{}", address);
+        boolean b = addressService.addNewUserAddress(address);
+
+        return b ? HttpJSONResult.ok() : HttpJSONResult.errorMsg("保存失败请稍后再试");
+    }
+
+    private HttpJSONResult checkAddress(AddressBO address) {
+        if (address == null)
+            return HttpJSONResult.errorMsg("地址信息为空");
+        String receiver = address.getReceiver();
+        if (StringUtils.isBlank(receiver))
+            return HttpJSONResult.errorMsg("收货人姓名为空");
+        if (receiver.length() > 12)
+            return HttpJSONResult.errorMsg("收货人姓名过长");
+
+        String mobile = address.getMobile();
+        if (StringUtils.isBlank(mobile))
+            return HttpJSONResult.errorMsg("收货人手机号为空");
+        if (mobile.length() != 11)
+            return HttpJSONResult.errorMsg("收货人手机号长度有误");
+        if (!MobileEmailUtils.checkMobileIsOk(mobile))
+            return HttpJSONResult.errorMsg("收货人手机号格式有误");
+
+        if (StringUtils.isBlank(address.getCity()) &&
+                StringUtils.isBlank(address.getDetail()) &&
+                StringUtils.isBlank(address.getDistrict()) &&
+                StringUtils.isBlank(address.getProvince())) {
+            return HttpJSONResult.errorMsg("收货人信息不正确");
+        }
+        return HttpJSONResult.ok();
     }
 }

@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.n3r.idworker.Sid;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -25,6 +26,9 @@ import static com.like.utils.DateUtil.ISO_EXPANDED_DATE_FORMAT;
 @Data
 @TableName(value = "users")
 public class Users implements Serializable {
+    @Autowired
+    private Sid sid;
+
     private static final long serialVersionUID = 1L;
     public static final String DEFAULT_FACE_URL = "https://i1.hdslb.com/bfs/face/c6679005eb3ccd47bf1d3a1a4a45622541ff2a59.jpg@140w_140h_1c.webp";
     public static final String COL_USERNAME = "username";
@@ -116,7 +120,7 @@ public class Users implements Serializable {
     }
 
     public Users(String username, String password) {
-        this.id = Sid.next();
+        this.id = sid.nextShort();
         this.username = username;
         try {
             this.password = MD5Utils.getMD5Str(password);

@@ -2,6 +2,7 @@ package com.like.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.like.pojo.UserAddress;
+import com.like.pojo.bo.AddressBO;
 
 import java.util.List;
 
@@ -14,5 +15,7 @@ public interface AddressService extends IService<UserAddress> {
      * @return {@link List<UserAddress>}
      */
     public List<UserAddress> queryAll(String userId);
+
+    boolean addNewUserAddress(AddressBO address);
 
 }
