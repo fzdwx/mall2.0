@@ -44,7 +44,7 @@ public class AddressServiceImpl extends ServiceImpl<UserAddressMapper, UserAddre
         // 判断当前用户是否存在地址，如果没有，则设置为 默认地址
         int isDefault = 0;
         List<UserAddress> dbAddress = queryAll(address.getUserId());
-        if (dbAddress != null && dbAddress.size() > 0) {
+        if (dbAddress == null || dbAddress.size() == 0) {
             isDefault = 1;
         }
 
