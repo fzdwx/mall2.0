@@ -64,7 +64,6 @@ public class ShopCartController {
     @GetMapping("/refresh/{itemSpecIds}")
     @ApiOperation(value = "根据商品规格的id list 查询对应的商品信息")
     public HttpJSONResult refresh(@PathVariable String itemSpecIds) {
-        System.out.println("1");
         log.info("商品规格id列表:{}", itemSpecIds);
         if (StrUtil.isBlank(itemSpecIds)) return HttpJSONResult.ok();
         List<ShopCartVO> data = itemService.queryItemsBySpecId(itemSpecIds);
