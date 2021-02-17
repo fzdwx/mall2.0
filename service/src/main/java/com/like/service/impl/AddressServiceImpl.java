@@ -57,4 +57,15 @@ public class AddressServiceImpl extends ServiceImpl<UserAddressMapper, UserAddre
 
         return save(target);
     }
+
+    @Override
+    public void updateUserAddress(AddressBO address) {
+
+        UserAddress target = new UserAddress();
+        BeanUtils.copyProperties(address, target);
+
+        target.setId(address.getAddressId());
+        target.setUpdatedTime(new Date());
+        updateById(target);
+    }
 }

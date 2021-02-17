@@ -16,6 +16,20 @@ public interface AddressService extends IService<UserAddress> {
      */
     public List<UserAddress> queryAll(String userId);
 
+    /**
+     * 添加新用户地址
+     *
+     * @param address 地址
+     * @return boolean
+     */
     boolean addNewUserAddress(AddressBO address);
+
+    /**
+     * 更新用户地址
+     *
+     * @param address 地址
+     * @return boolean
+     */
+    void updateUserAddress(AddressBO address);
 
 }

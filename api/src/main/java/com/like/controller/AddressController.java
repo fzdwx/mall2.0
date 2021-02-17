@@ -59,6 +59,22 @@ public class AddressController {
         return b ? HttpJSONResult.ok() : HttpJSONResult.errorMsg("保存失败请稍后再试");
     }
 
+    @PostMapping("/add")
+    @ApiOperation(value = "用户添加地址")
+    public HttpJSONResult update(@RequestBody AddressBO address) {
+        if (StringUtils.isBlank(address.getAddressId())) {
+            return HttpJSONResult.errorMsg("修改地址错误:address Id 为空");
+        }
+        HttpJSONResult checkRes = checkAddress(address);
+        if (checkRes.getStatus() != 200) {
+            return checkRes;
+        }
+        log.info("用户修改地址：{}", address);
+        addressService.updateUserAddress(address);
+
+        return HttpJSONResult.ok();
+    }
+
     private HttpJSONResult checkAddress(AddressBO address) {
         if (address == null)
             return HttpJSONResult.errorMsg("地址信息为空");
