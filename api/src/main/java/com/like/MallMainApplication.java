@@ -10,7 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
  * @since 2021-02-05 17:02
  */
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.like", "org.n3r.idworker"})
+@ComponentScan(basePackages = {"com.like", "org.n3r"})
 public class MallMainApplication {
     public static void main(String[] args) {
         SpringApplication.run(MallMainApplication.class, args);
