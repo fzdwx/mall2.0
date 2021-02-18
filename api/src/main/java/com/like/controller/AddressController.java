@@ -59,6 +59,18 @@ public class AddressController {
         return b ? HttpJSONResult.ok() : HttpJSONResult.errorMsg("保存失败请稍后再试");
     }
 
+    @PostMapping("/delete")
+    @ApiOperation(value = "用户删除地址")
+    public HttpJSONResult delete(@RequestParam String userId, @RequestParam String addressId) {
+        if (StringUtils.isBlank(userId) || StringUtils.isBlank(addressId)) {
+            return HttpJSONResult.errorMsg("请求参数缺少");
+        }
+        log.info("用户删除地址：{}-{}", userId, addressId);
+        addressService.deleteUserAddress(userId, addressId);
+
+        return HttpJSONResult.errorMsg("保存失败请稍后再试");
+    }
+
     @PostMapping("/add")
     @ApiOperation(value = "用户添加地址")
     public HttpJSONResult update(@RequestBody AddressBO address) {

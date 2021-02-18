@@ -32,4 +32,11 @@ public interface AddressService extends IService<UserAddress> {
      */
     void updateUserAddress(AddressBO address);
 
+    /**
+     * 删除用户地址
+     *
+     * @param userId    用户id
+     * @param addressId 地址标识
+     */
+    void deleteUserAddress(String userId, String addressId);
 }

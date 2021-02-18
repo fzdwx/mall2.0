@@ -51,6 +51,7 @@ public class AddressServiceImpl extends ServiceImpl<UserAddressMapper, UserAddre
         String addressId = sid.nextShort();
         UserAddress target = new UserAddress();
         BeanUtils.copyProperties(address, target);
+        target.setId(addressId);
         target.setIsDefault(isDefault);
         target.setCreatedTime(new Date());
         target.setUpdatedTime(new Date());
@@ -60,7 +61,6 @@ public class AddressServiceImpl extends ServiceImpl<UserAddressMapper, UserAddre
 
     @Override
     public void updateUserAddress(AddressBO address) {
-
         UserAddress target = new UserAddress();
         BeanUtils.copyProperties(address, target);
 
@@ -68,4 +68,12 @@ public class AddressServiceImpl extends ServiceImpl<UserAddressMapper, UserAddre
         target.setUpdatedTime(new Date());
         updateById(target);
     }
+
+    @Override
+    public void deleteUserAddress(String userId, String addressId) {
+        remove(new QueryWrapper<UserAddress>()
+                .eq(UserAddress.COL_USER_ID, userId)
+                .eq("id", addressId));
+    }
+
 }
