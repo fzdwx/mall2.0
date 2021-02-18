@@ -70,6 +70,7 @@ public class AddressServiceImpl extends ServiceImpl<UserAddressMapper, UserAddre
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public void deleteUserAddress(String userId, String addressId) {
         remove(new QueryWrapper<UserAddress>()
                 .eq(UserAddress.COL_USER_ID, userId)

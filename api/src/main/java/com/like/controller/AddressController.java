@@ -71,8 +71,8 @@ public class AddressController {
         return HttpJSONResult.errorMsg("保存失败请稍后再试");
     }
 
-    @PostMapping("/add")
-    @ApiOperation(value = "用户添加地址")
+    @PostMapping("/update")
+    @ApiOperation(value = "用户修改地址")
     public HttpJSONResult update(@RequestBody AddressBO address) {
         if (StringUtils.isBlank(address.getAddressId())) {
             return HttpJSONResult.errorMsg("修改地址错误:address Id 为空");
