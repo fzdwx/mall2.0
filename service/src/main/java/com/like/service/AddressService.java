@@ -39,4 +39,12 @@ public interface AddressService extends IService<UserAddress> {
      * @param addressId 地址标识
      */
     void deleteUserAddress(String userId, String addressId);
+
+    /**
+     * 设置默认
+     *
+     * @param userId    用户id
+     * @param addressId 地址标识
+     */
+    void setDefault(String userId, String addressId);
 }

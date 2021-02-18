@@ -87,6 +87,18 @@ public class AddressController {
         return HttpJSONResult.ok();
     }
 
+    @PostMapping("/setDefault")
+    @ApiOperation(value = "设置为默认地址")
+    public HttpJSONResult setDefaultAddress(@RequestParam String userId, @RequestParam String addressId) {
+        if (StringUtils.isBlank(userId) || StringUtils.isBlank(addressId)) {
+            return HttpJSONResult.errorMsg("请求参数缺少");
+        }
+        log.info("用户设置默认地址：{}-{}", userId, addressId);
+        addressService.setDefault(userId, addressId);
+
+        return HttpJSONResult.errorMsg("保存失败请稍后再试");
+    }
+
     private HttpJSONResult checkAddress(AddressBO address) {
         if (address == null)
             return HttpJSONResult.errorMsg("地址信息为空");
