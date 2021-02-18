@@ -10,7 +10,9 @@ import com.like.utils.DateUtil;
 import com.like.utils.MD5Utils;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.n3r.idworker.Sid;
 
 import java.io.Serializable;
@@ -24,8 +26,11 @@ import static com.like.utils.DateUtil.ISO_EXPANDED_DATE_FORMAT;
 @ApiModel(value = "com.like.pojo.Users")
 @Data
 @TableName(value = "users")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Users implements Serializable {
 
+    @TableField(exist = false)
     private static Sid sid = new Sid();
 
     private static final long serialVersionUID = 1L;
