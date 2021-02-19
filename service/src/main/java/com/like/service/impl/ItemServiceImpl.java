@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.like.enums.CommentLevel;
+import com.like.enums.YesOrNo;
 import com.like.mapper.*;
 import com.like.pojo.*;
 import com.like.pojo.vo.CommentLevelCountsVO;
@@ -18,10 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author like
@@ -132,6 +131,28 @@ public class ItemServiceImpl extends ServiceImpl<ItemsMapper, Items> implements 
         List<String> ids = Arrays.asList(specIds.split(","));
 
         return itemsMapper.queryItemsBySpecId(ids);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public List<ItemsSpec> queryItemSpecListBySpecIds(List<String> specIds) {
+        return itemsSpecMapper.selectList(new QueryWrapper<ItemsSpec>()
+                .in("id", specIds));
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public List<Items> queryItemList(List<String> itemIds) {
+        return list(new QueryWrapper<Items>().in("id", itemIds));
+    }
+
+    @Override
+    public Map<String, String> queryItemMainImgByIds(List<String> itemIds) {
+        List<ItemsImg> imgs = itemsImgMapper.selectList(new QueryWrapper<ItemsImg>()
+                .in(ItemsImg.COL_ITEM_ID, itemIds)
+                .eq(ItemsImg.COL_IS_MAIN, YesOrNo.YES.code)
+                .select("item_id ,url "));
+        return imgs.stream().distinct().collect(Collectors.toMap(ItemsImg::getItemId, ItemsImg::getUrl));
     }
 
     /**

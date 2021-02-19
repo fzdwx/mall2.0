@@ -47,4 +47,13 @@ public interface AddressService extends IService<UserAddress> {
      * @param addressId 地址标识
      */
     void setDefault(String userId, String addressId);
+
+    /**
+     * 查询用户地址
+     *
+     * @param userId    用户id
+     * @param addressId 地址标识
+     * @return {@link UserAddress}
+     */
+    UserAddress queryUserAddress(String userId, String addressId);
 }

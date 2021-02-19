@@ -7,7 +7,9 @@ package com.like.enums;
  * @since 2021-02-11 11:28
  */
 public enum CommentLevel {
-    GOOD(1, "好评"), NORMAL(2, "差评"), BAD(3, "中评");
+    GOOD(1, "好评"),
+    NORMAL(2, "差评"),
+    BAD(3, "中评");
 
     public final Integer code;
     public final String value;

@@ -13,6 +13,7 @@ import com.like.pojo.vo.ShopCartVO;
 import com.like.utils.PagedGridResult;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author like
@@ -105,4 +106,28 @@ public interface ItemService extends IService<Items> {
      * @return {@link IPage<ShopCartVO>}
      */
     public List<ShopCartVO> queryItemsBySpecId(String specIds);
+
+    /**
+     * 根据SpecId查询ItemSpec
+     *
+     * @param specIds 规范标识
+     * @return {@link List<ItemsSpec>}
+     */
+    List<ItemsSpec> queryItemSpecListBySpecIds(List<String> specIds);
+
+    /**
+     * 根据商品ids
+     *
+     * @param itemIds idList
+     * @return {@link List<Items>}
+     */
+    List<Items> queryItemList(List<String> itemIds);
+
+    /**
+     * 根据itemId获取对应的主图片路径
+     *
+     * @param itemIds 项id
+     * @return
+     */
+    Map<String, String> queryItemMainImgByIds(List<String> itemIds);
 }

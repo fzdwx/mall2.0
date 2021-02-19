@@ -105,4 +105,12 @@ public class AddressServiceImpl extends ServiceImpl<UserAddressMapper, UserAddre
         }
     }
 
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public UserAddress queryUserAddress(String userId, String addressId) {
+        return getOne(new QueryWrapper<UserAddress>()
+                .eq("id", addressId)
+                .eq(UserAddress.COL_USER_ID, userId)
+        );
+    }
 }
