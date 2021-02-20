@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,7 +28,7 @@ public class OrderController {
 
     @PostMapping("create")
     @ApiOperation("创建订单")
-    public HttpJSONResult create(SubmitOrderBO submitOrder) {
+    public HttpJSONResult create(@RequestBody SubmitOrderBO submitOrder) {
         // 1.创建订单
         orderService.createOrder(submitOrder);
         // 2.创建订单后，移除购物车中已结算(已提交)的商品

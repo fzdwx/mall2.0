@@ -34,7 +34,7 @@ public class AddressController {
     @Autowired
     private AddressService addressService;
 
-    @PostMapping("/list")
+    @GetMapping("/list")
     @ApiOperation(value = "查询用户的收货地址")
     public HttpJSONResult list(@RequestParam String userId) {
         if (StringUtils.isBlank(userId))
