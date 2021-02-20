@@ -25,7 +25,7 @@ import java.util.List;
  * 4.修改收货地址
  * 5.设置默认地址
  */
-@Api(value = "地址相关接口")
+@Api(value = "地址", tags = {"用户地址相关操作接口"})
 @RequestMapping("address")
 @Slf4j
 @RestController

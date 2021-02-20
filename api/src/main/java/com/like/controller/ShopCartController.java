@@ -23,7 +23,7 @@ import java.util.List;
  * @since 2021-02-14 17:22
  * 购物车相关接口
  */
-@Api(value = "购物车接口")
+@Api(value = "购物车接口", tags = {"购物车相关接口"})
 @RequestMapping("shopcart")
 @Slf4j
 @RestController
