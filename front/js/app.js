@@ -3,6 +3,7 @@ let baseUrl = environment === 'dev' ? 'http://localhost:8088' : 'http://47.105.4
 let shopIndexUrl = environment === 'dev' ? 'http://localhost:8080/' : 'http://47.105.41.229:80/'
 
 window.app = {
+    paymentServerUrl: "http://payment.t.mukewang.com/foodie-payment/", // 支付網站
     serverUrl: baseUrl,                                                     // 接口服务接口地址
     shopServerUrl: shopIndexUrl,                      			    // 门户网站地址
     centerServerUrl: "center.html",                                         // 用户中心地址
