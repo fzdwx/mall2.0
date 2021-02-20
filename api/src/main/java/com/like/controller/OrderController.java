@@ -1,5 +1,6 @@
 package com.like.controller;
 
+import com.like.enums.OrderStatusEnum;
 import com.like.pojo.bo.SubmitOrderBO;
 import com.like.service.OrderService;
 import com.like.utils.CookieUtils;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 
 /**
  * @author like
@@ -41,5 +43,12 @@ public class OrderController extends BaseController {
         CookieUtils.setCookie(request, response, FOODIE_SHOPCART_SESSION, "", true);
         // 3.向支付中心发送当前订单，用于保存支付中心的订单数据
         return HttpJSONResult.ok(orderId);
+    }
+
+    @PostMapping("/notifyMerchantOrderPaid/{}")
+    public HttpJSONResult notifyMerchantOrderPaid(String merchantOrderId) {
+        orderService.updateOrderStatus(merchantOrderId, OrderStatusEnum.WAIT_DELIVER.type);
+
+        return HttpJSONResult.ok();
     }
 }

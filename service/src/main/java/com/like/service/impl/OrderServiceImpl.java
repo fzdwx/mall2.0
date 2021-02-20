@@ -140,4 +140,14 @@ public class OrderServiceImpl implements OrderService {
 
         return orderId;
     }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void updateOrderStatus(String merchantOrderId, Integer status) {
+        OrderStatus orderStatus = new OrderStatus();
+        orderStatus.setOrderId(merchantOrderId);
+        orderStatus.setOrderStatus(status);
+
+        orderStatusService.updateById(orderStatus);
+    }
 }
