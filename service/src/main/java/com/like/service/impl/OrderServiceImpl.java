@@ -38,7 +38,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public void createOrder(SubmitOrderBO submitOrder) {
+    public String createOrder(SubmitOrderBO submitOrder) {
         String orderId = sid.nextShort();
         String userId = submitOrder.getUserId();
         String addressId = submitOrder.getAddressId();
@@ -137,5 +137,7 @@ public class OrderServiceImpl implements OrderService {
         itemIdMapSpec.forEach((itemId, spec) -> {
             itemsSpecService.decreaseItemSpecStock(spec.getId(), buyCount);
         });
+
+        return orderId;
     }
 }

@@ -8,6 +8,7 @@ public interface OrderService {
      * 创建订单
      *
      * @param submitOrder 提交订单的bo
+     * @return
      */
-    void createOrder(SubmitOrderBO submitOrder);
+    String createOrder(SubmitOrderBO submitOrder);
 }

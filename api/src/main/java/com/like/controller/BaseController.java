@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class BaseController {
 
+    public static final String FOODIE_SHOPCART_SESSION = "shopcart";
     /**
      * 默认分页大小
      */
