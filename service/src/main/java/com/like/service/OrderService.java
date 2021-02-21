@@ -1,9 +1,11 @@
 package com.like.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.like.pojo.OrderVO;
+import com.like.pojo.Orders;
 import com.like.pojo.bo.SubmitOrderBO;
 
-public interface OrderService {
+public interface OrderService extends IService<Orders> {
 
     /**
      * 创建订单

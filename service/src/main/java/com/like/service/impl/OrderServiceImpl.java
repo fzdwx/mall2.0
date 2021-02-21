@@ -1,7 +1,9 @@
 package com.like.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.like.enums.OrderStatusEnum;
 import com.like.enums.YesOrNo;
+import com.like.mapper.OrdersMapper;
 import com.like.pojo.*;
 import com.like.pojo.bo.SubmitOrderBO;
 import com.like.pojo.vo.MerchantOrdersVO;
@@ -22,7 +24,7 @@ import java.util.stream.Collectors;
  * @since 2021-02-19 12:59
  */
 @Service
-public class OrderServiceImpl implements OrderService {
+public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implements OrderService {
 
     @Autowired
     private com.like.service.OrderItemsService OrderItemsService;
@@ -82,6 +84,8 @@ public class OrderServiceImpl implements OrderService {
         });
         order.setTotalAmount(totalAmount.get());
         order.setRealPayAmount(realPayAmount.get());
+
+        save(order);
 
         // 2.保存子订单信息
         ArrayList<OrderItems> saveOrderItems = new ArrayList<>();
