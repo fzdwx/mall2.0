@@ -46,8 +46,8 @@
                             </div>
                             <div class="ep-order-tit">
                                     <span>支付金额：
-                                        <em class="rmb" v-if="paymentInfo.total_fee">
-                                            <i>¥</i>{{paymentInfo.total_fee / 100}}
+                                        <em class="rmb" v-if="paymentInfo.amount">
+                                            <i>¥</i>{{paymentInfo.amount / 100}}
                                         </em>
                                     </span>
                             </div>
@@ -75,9 +75,9 @@
                                         <div class="clearfix">
                                             <div class="fl">
                                                 <div class="ep-wxpay-qrcode-wrap">
-                                                    <!-- <div id="wxqrcode-display" style="margin-bottom: 10px;"></div> -->
-                                                    <img :src="paymentInfo.qrcode" height="200" width="200"
-                                                         class="ep-wxpay-qrcode"/>
+                                                    <div id="wxqrcode-display" style="margin-bottom: 10px;"></div>
+                                                    <!--                                                    <img :src="paymentInfo.qrCodeUrl" height="200" width="200"-->
+                                                    <!--                                                         class="ep-wxpay-qrcode"/>-->
                                                 </div>
 
                                                 <div class="ep-wxpay-qrcode-notice">
@@ -154,7 +154,7 @@
                 var serverUrl = app.serverUrl;
                 axios.defaults.withCredentials = true;
                 axios.post(
-                    serverUrl + '/pay/getPaidOrderInfo?payjsOrderId=' + this.paymentInfo.payjs_order_id,
+                    serverUrl + '/pay/getPaidOrderInfo?payjsOrderId=' + this.paymentInfo.merchantOrderId,
                     {},
                     {
                         headers: {
@@ -178,7 +178,7 @@
             },
             getWXPayQRCodeUrl(orderId) {
                 var userInfo = this.userInfo;
-
+                console.log("生成二维码")
                 // 发起请求获得微信支付扫描二维码
                 var serverUrl = app.serverUrl;
                 axios.defaults.withCredentials = true;
@@ -194,8 +194,12 @@
                     })
                     .then(res => {
                         if (res.data.status == 200) {
-                            var paymentInfo = res.data.data;
-                            this.paymentInfo = paymentInfo;
+                            this.paymentInfo = res.data.data;
+                            $('#wxqrcode-display').qrcode({
+                                width: 200,
+                                height: 200,
+                                text: this.paymentInfo.qrCodeUrl
+                            })
                         } else {
                             alert(res.data.msg);
                         }
