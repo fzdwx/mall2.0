@@ -16,7 +16,7 @@ public class BaseController {
      */
     public static final Integer DEFAULT_PAGESIZE = 10;
 
-    public static final String paymentUrl = "http://payment.t.com/foodie-payment/payment/createMerchantOrder";
+    public static final String paymentUrl = "http://payment.t.mukewang.com/foodie-payment/payment/createMerchantOrder";
     /**
      * 支付成功后 -> 支付中心 -> 服務器後代后台(payReturnUrl)
      */

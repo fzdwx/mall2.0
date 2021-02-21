@@ -2,6 +2,7 @@ package com.like.utils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.ToString;
 
 /**
  * @author like
@@ -17,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * #####
  * @since 2021-02-07 12:31
  */
+@ToString
 public class HttpJSONResult<V> {
 
     /**
