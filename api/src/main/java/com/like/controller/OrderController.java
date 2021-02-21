@@ -56,6 +56,8 @@ public class OrderController extends BaseController {
         headers.add("imoocUserId", "imooc");
         headers.add("password", "imooc");
 
+        order.getMerchant().setAmount(1);// TODO: 2021/2/21  测试
+
         ResponseEntity<HttpJSONResult> resp = restTemplate.postForEntity(
                 paymentUrl,
                 new HttpEntity<MerchantOrdersVO>(order.getMerchant(), headers),
