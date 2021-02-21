@@ -11,10 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -49,6 +46,7 @@ public class OrderController extends BaseController {
         // TODO: 2021/2/20 整合redis后，完善购物车中的已结算商品清除，并同步到前端的cookie
         CookieUtils.setCookie(request, response, FOODIE_SHOPCART_SESSION, "", true);
         // 3.向支付中心发送当前订单，用于保存支付中心的订单数据
+        // 设置回调路径
         order.getMerchant().setReturnUrl(payReturnUrl + orderId);
 
         HttpHeaders headers = new HttpHeaders();
@@ -69,10 +67,10 @@ public class OrderController extends BaseController {
         return HttpJSONResult.ok(orderId);
     }
 
-    @PostMapping("/notifyMerchantOrderPaid/{merchantOrderId}")
-    public HttpJSONResult notifyMerchantOrderPaid(@PathVariable String merchantOrderId) {
+    @GetMapping("/notifyMerchantOrderPaid/{merchantOrderId}")
+    public Integer notifyMerchantOrderPaid(@PathVariable String merchantOrderId) {
         orderService.updateOrderStatus(merchantOrderId, OrderStatusEnum.WAIT_DELIVER.type);
 
-        return HttpJSONResult.ok();
+        return HttpStatus.OK.value();
     }
 }

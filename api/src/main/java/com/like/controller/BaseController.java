@@ -20,5 +20,6 @@ public class BaseController {
     /**
      * 支付成功后 -> 支付中心 -> 服務器後代后台(payReturnUrl)
      */
-    public static final String payReturnUrl = "http://localhost:8088/orders/notifyMerchantOrderPaid/";
+//    public static final String payReturnUrl = "http://localhost:8088/orders/notifyMerchantOrderPaid/";
+    public static final String payReturnUrl = "http://y3e8kt.natappfree.cc/orders/notifyMerchantOrderPaid/";
 }
