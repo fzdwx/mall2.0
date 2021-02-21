@@ -4,6 +4,7 @@ import com.like.enums.OrderStatusEnum;
 import com.like.enums.YesOrNo;
 import com.like.pojo.*;
 import com.like.pojo.bo.SubmitOrderBO;
+import com.like.pojo.vo.MerchantOrdersVO;
 import com.like.service.*;
 import org.n3r.idworker.Sid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public String createOrder(SubmitOrderBO submitOrder) {
+    public OrderVO createOrder(SubmitOrderBO submitOrder) {
         String orderId = sid.nextShort();
         String userId = submitOrder.getUserId();
         String addressId = submitOrder.getAddressId();
@@ -138,7 +139,16 @@ public class OrderServiceImpl implements OrderService {
             itemsSpecService.decreaseItemSpecStock(spec.getId(), buyCount);
         });
 
-        return orderId;
+        // 5.构建商户订单 用于传给支付中心
+        MerchantOrdersVO merchant = new MerchantOrdersVO();
+        merchant.setMerchantOrderId(orderId);
+        merchant.setMerchantUserId(userId);
+        merchant.setAmount(realPayAmount.get() + postAmount);
+        merchant.setPayMethod(payMethod);
+
+        // 6.构建自定义订单vo
+        OrderVO ordervo = new OrderVO(orderId, merchant);
+        return ordervo;
     }
 
     @Override

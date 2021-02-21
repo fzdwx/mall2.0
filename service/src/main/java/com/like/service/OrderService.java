@@ -1,5 +1,6 @@
 package com.like.service;
 
+import com.like.pojo.OrderVO;
 import com.like.pojo.bo.SubmitOrderBO;
 
 public interface OrderService {
@@ -10,7 +11,7 @@ public interface OrderService {
      * @param submitOrder 提交订单的bo
      * @return
      */
-    String createOrder(SubmitOrderBO submitOrder);
+    OrderVO createOrder(SubmitOrderBO submitOrder);
 
     /**
      * 更新订单状态

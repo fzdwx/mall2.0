@@ -15,4 +15,10 @@ public class BaseController {
      * 默认分页大小
      */
     public static final Integer DEFAULT_PAGESIZE = 10;
+
+    public static final String paymentUrl = "http://payment.t.com/foodie-payment/payment/createMerchantOrder";
+    /**
+     * 支付成功后 -> 支付中心 -> 服務器後代后台(payReturnUrl)
+     */
+    public static final String payReturnUrl = "http://localhost:8088/orders/notifyMerchantOrderPaid/";
 }
