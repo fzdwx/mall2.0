@@ -183,7 +183,8 @@
                 var serverUrl = app.serverUrl;
                 axios.defaults.withCredentials = true;
                 axios.post(
-                    serverUrl + '/pay/getWXPayQRCode?userId=' + userInfo.id + "&orderId=" + orderId,
+                    // serverUrl + '/pay/getWXPayQRCode?userId=' + userInfo.id + "&orderId=" + orderId,
+                    app.paymentServerUrl + '/payment/getWXPayQRCode?merchantOrderId=' + orderId + "&merchantUserId=" + userInfo.id,
                     {},
                     {
                         headers: {
