@@ -26,6 +26,12 @@ public class OrderJob {
     /**
      * 自动关闭长时间未支付订单
      * 暂定每隔一个小时
+     * 问题：
+     * 1.存在时间差
+     * 2.不支持集群
+     * 3.会对数据库进行全表搜索
+     * <p>
+     * 后续优化：使用延时队列
      */
     @Scheduled(cron = "0 0 0/1 * * ?")
     public void autoCloseOrder() {
