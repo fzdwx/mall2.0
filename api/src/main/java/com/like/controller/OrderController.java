@@ -1,6 +1,7 @@
 package com.like.controller;
 
 import com.like.enums.OrderStatusEnum;
+import com.like.pojo.OrderStatus;
 import com.like.pojo.OrderVO;
 import com.like.pojo.bo.SubmitOrderBO;
 import com.like.pojo.vo.MerchantOrdersVO;
@@ -72,5 +73,13 @@ public class OrderController extends BaseController {
         orderService.updateOrderStatus(merchantOrderId, OrderStatusEnum.WAIT_DELIVER.type);
 
         return HttpStatus.OK.value();
+    }
+
+
+    @PostMapping("/getPaidOrderInfo/{orderId}")
+    public HttpJSONResult getPaidOrderInfo(@PathVariable String orderId) {
+        OrderStatus status = orderService.queryPaidOrderInfo(orderId);
+
+        return HttpJSONResult.ok(status);
     }
 }

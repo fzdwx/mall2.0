@@ -154,7 +154,8 @@
                 var serverUrl = app.serverUrl;
                 axios.defaults.withCredentials = true;
                 axios.post(
-                    serverUrl + '/pay/getPaidOrderInfo?payjsOrderId=' + this.paymentInfo.merchantOrderId,
+                    // serverUrl + '/pay/getPaidOrderInfo?payjsOrderId=' + this.paymentInfo.merchantOrderId,
+                    serverUrl + '/orders/getPaidOrderInfo/' + orderId,
                     {},
                     {
                         headers: {

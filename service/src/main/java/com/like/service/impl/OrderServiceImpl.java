@@ -164,4 +164,9 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
 
         orderStatusService.updateById(orderStatus);
     }
+
+    @Override
+    public OrderStatus queryPaidOrderInfo(String orderId) {
+        return orderStatusService.getById(orderId);
+    }
 }
