@@ -1,4 +1,4 @@
-package com.like.controller.userCenter;
+package com.like.controller.center;
 
 import com.like.pojo.Users;
 import com.like.service.center.UserCenterService;
@@ -14,14 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * @author like
  * @email 980650920@qq.com
- * @Description: 用户中心
- * @since 2021-02-24 15:27
+ * @since 2021-02-24 16:34
  */
-@Api(value = "用户中心", tags = "用户中心相关接口")
+@Api(value = "中心", tags = "中心相关接口")
 @RestController
 @RequestMapping("center")
-public class UserCenterController {
-
+public class CenterController {
     @Autowired
     UserCenterService userCenterService;
 
