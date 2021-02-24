@@ -322,7 +322,7 @@
                 var serverUrl = app.serverUrl;
                 axios.defaults.withCredentials = true;
                 axios.put(
-                    serverUrl + '/center/userInfo?userId=' + userInfo.id,
+                    serverUrl + '/center/userInfo/' + userInfo.id,
                     userInfoMore,
                     {
                         headers: {

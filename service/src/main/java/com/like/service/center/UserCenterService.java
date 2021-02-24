@@ -2,6 +2,7 @@ package com.like.service.center;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.like.pojo.Users;
+import com.like.pojo.bo.center.UserCenterBo;
 
 /**
  * @author like
@@ -17,4 +18,6 @@ public interface UserCenterService extends IService<Users> {
      * @return {@link Users}
      */
     Users queryUserInfo(String userId);
+
+    Users updateUseUserCenterBO(String userId, UserCenterBo user);
 }
