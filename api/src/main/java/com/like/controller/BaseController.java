@@ -17,6 +17,7 @@ public class BaseController {
     public static final Integer DEFAULT_PAGESIZE = 10;
 
     public static final String paymentUrl = "http://payment.t.mukewang.com/foodie-payment/payment/createMerchantOrder";
+//    public final String IMAGE_USER_FACE_LOCATION = "D:\\Java\\project\\stduyproject\\mall2.0\\api\\src\\main\\resources\\static\\image\\userFace";
     /**
      * 支付成功后 -> 支付中心 -> 服務器後代后台(payReturnUrl)
      */

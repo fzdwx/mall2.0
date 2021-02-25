@@ -244,7 +244,7 @@
                 var serverUrl = app.serverUrl;
                 axios.defaults.withCredentials = true;
                 axios.post(
-                    serverUrl + '/center/userface?userId=' + userInfo.id,
+                    serverUrl + '/userInfo/userface?userId=' + userInfo.id,
                     multiForm,
                     {
                         headers: {
@@ -321,8 +321,8 @@
                 // 请求后端获得最新数据
                 var serverUrl = app.serverUrl;
                 axios.defaults.withCredentials = true;
-                axios.put(
-                    serverUrl + '/center/userInfo/' + userInfo.id,
+                axios.post(
+                    serverUrl + '/userInfo/update/' + userInfo.id,
                     userInfoMore,
                     {
                         headers: {

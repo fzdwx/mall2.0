@@ -1,7 +1,9 @@
 package com.like.controller.center;
 
+import com.like.controller.BaseController;
 import com.like.pojo.Users;
 import com.like.pojo.bo.center.UserCenterBo;
+import com.like.resource.FileUpload;
 import com.like.service.center.UserCenterService;
 import com.like.utils.CookieUtils;
 import com.like.utils.DateUtil;
@@ -9,13 +11,20 @@ import com.like.utils.HttpJSONResult;
 import com.like.utils.JsonUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,15 +38,78 @@ import java.util.Map;
 @Api(value = "用户中心", tags = "用户中心相关接口")
 @RestController
 @RequestMapping("userInfo")
-public class UserCenterController {
+public class UserCenterController extends BaseController {
 
     @Autowired
     UserCenterService userCenterService;
+    @Autowired
+    FileUpload fileUpload;
 
-    @GetMapping("update")
-    @ApiOperation(value = "修改用户信息", notes = "修改用户信息")
-    public HttpJSONResult queryUserInfo(
+    @PostMapping("userface")
+    @ApiOperation(value = "修改用户头像", notes = "修改用户头像")
+    public HttpJSONResult userface(
             @RequestParam String userId,
+            MultipartFile file,
+            HttpServletRequest req, HttpServletResponse reps) {
+
+        if (file != null) {
+            FileOutputStream fos = null;
+            InputStream is = null;
+            try {
+                // 定义头像的保存地址
+//                String filePath = IMAGE_USER_FACE_LOCATION;
+                String filePath = fileUpload.getImageUserFaceLocation();
+                String uploadPrefix = File.separator + userId;
+                String suffix;
+                String rawName = file.getOriginalFilename();
+                String finallyFacePath;
+                if (StringUtils.isNotBlank(rawName)) {   // face-{userId}.png
+                    String[] s = rawName.split("\\.");
+                    suffix = s[s.length - 1];
+
+                    String newName = "face-" + userId + "." + suffix;
+
+                    finallyFacePath = filePath + uploadPrefix + File.separator + newName;
+
+                    File outFile = new File(finallyFacePath);
+                    if (outFile.getParentFile() != null) {
+                        // 创建文件夹
+                        outFile.getParentFile().mkdirs();
+                    }
+                    fos = new FileOutputStream(outFile);
+                    is = file.getInputStream();
+                    IOUtils.copy(is, fos);
+                    System.out.println(outFile.getPath());
+                }
+                return HttpJSONResult.ok();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (fos != null) {
+                    try {
+                        fos.flush();
+                        fos.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (is != null) {
+                    try {
+                        is.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        return HttpJSONResult.errorMsg("文件不能为空");
+    }
+
+    @PostMapping("update/{userId}")
+    @ApiOperation(value = "修改用户信息", notes = "修改用户信息")
+    public HttpJSONResult update(
+            @PathVariable String userId,
             @RequestBody UserCenterBo user,
             BindingResult bindResult,
             HttpServletRequest req, HttpServletResponse reps) {
