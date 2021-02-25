@@ -19,5 +19,21 @@ public interface UserCenterService extends IService<Users> {
      */
     Users queryUserInfo(String userId);
 
+    /**
+     * 更新用户信息
+     *
+     * @param userId 用户id
+     * @param user   用户
+     * @return {@link Users}
+     */
     Users updateUseUserCenterBO(String userId, UserCenterBo user);
+
+    /**
+     * 更新用户的头像
+     *
+     * @param userId 用户id
+     * @param url    url
+     * @return
+     */
+    Users updateUserFace(String userId, String url);
 }

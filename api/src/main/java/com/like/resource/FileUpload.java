@@ -18,7 +18,14 @@ import org.springframework.stereotype.Component;
 @Setter
 public class FileUpload {
 
+    /**
+     * 用户头像保存在本地的路径
+     */
     private String imageUserFaceLocation;
+    /**
+     * 用户头像在web页面访问的前缀 + 210220AW6WGTZ8BC/face-210220AW6WGTZ8BC.jpg
+     */
+    private String imageServerUlrPrefix;
 
 
 }

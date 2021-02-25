@@ -40,4 +40,14 @@ public class UserCenterServiceImpl extends ServiceImpl<UsersMapper, Users> imple
 
         return updateUsers;
     }
+
+    @Override
+    public Users updateUserFace(String userId, String url) {
+        Users users = new Users();
+        users.setId(userId);
+        users.setFace(url);
+        updateById(users);
+
+        return queryUserInfo(userId);
+    }
 }

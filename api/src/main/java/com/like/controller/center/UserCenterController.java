@@ -11,6 +11,7 @@ import com.like.utils.HttpJSONResult;
 import com.like.utils.JsonUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +40,7 @@ import java.util.Map;
 @Api(value = "用户中心", tags = "用户中心相关接口")
 @RestController
 @RequestMapping("userInfo")
+@Slf4j
 public class UserCenterController extends BaseController {
 
     @Autowired
@@ -79,7 +82,19 @@ public class UserCenterController extends BaseController {
                     fos = new FileOutputStream(outFile);
                     is = file.getInputStream();
                     IOUtils.copy(is, fos);
-                    System.out.println(outFile.getPath());
+
+                    // 定义访问路径  由于浏览器可能存在缓存 所以加上 时间戳
+                    String path = fileUpload.getImageServerUlrPrefix() + "/" + userId + "/" + newName
+                            + "?t=" + new Date().getTime();
+                    log.info("用户新头像访问地址：{}", path);
+                    // 更新用户头像
+                    Users dbUser = userCenterService.updateUserFace(userId, path);
+
+                    // 保护用户隐私信息
+                    setNullProperty(dbUser);
+                    CookieUtils.setCookie(req, reps,
+                            "user",
+                            JsonUtils.objectToJson(dbUser), true);
                 }
                 return HttpJSONResult.ok();
             } catch (IOException e) {
