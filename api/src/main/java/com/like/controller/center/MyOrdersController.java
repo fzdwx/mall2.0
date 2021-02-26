@@ -8,7 +8,6 @@ import com.like.enums.YesOrNo;
 import com.like.pojo.Orders;
 import com.like.pojo.vo.MyOrdersVo;
 import com.like.service.OrderService;
-import com.like.service.center.OrderCenterService;
 import com.like.utils.HttpJSONResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,8 +24,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("myOrders")
 public class MyOrdersController extends BaseController {
-    @Autowired
-    private OrderCenterService orderCenterService;
     @Autowired
     private OrderService orderService;
 
@@ -48,7 +45,7 @@ public class MyOrdersController extends BaseController {
         if (StringUtils.isBlank(orderStatus)) {
             orderStatus = null;
         }
-        IPage<MyOrdersVo> myOrders = orderCenterService.queryOrdersByUserIdAndOrderStatus(userId, orderStatus, page, pageSize);
+        IPage<MyOrdersVo> myOrders = orderService.queryOrdersByUserIdAndOrderStatus(userId, orderStatus, page, pageSize);
         return HttpJSONResult.ok(myOrders);
     }
 

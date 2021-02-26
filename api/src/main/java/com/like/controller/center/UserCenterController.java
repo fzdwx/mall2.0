@@ -4,7 +4,7 @@ import com.like.controller.BaseController;
 import com.like.pojo.Users;
 import com.like.pojo.bo.center.UserCenterBo;
 import com.like.resource.FileUpload;
-import com.like.service.center.UserCenterService;
+import com.like.service.UsersService;
 import com.like.utils.CookieUtils;
 import com.like.utils.DateUtil;
 import com.like.utils.HttpJSONResult;
@@ -44,14 +44,14 @@ import java.util.Map;
 public class UserCenterController extends BaseController {
 
     @Autowired
-    private UserCenterService userCenterService;
+    private UsersService usersService;
     @Autowired
     private FileUpload fileUpload;
 
     @GetMapping("/{userId}")
     @ApiOperation(value = "获取用户信息", notes = "获取用户信息")
     public HttpJSONResult queryUserInfo(@PathVariable String userId) {
-        Users user = userCenterService.queryUserInfo(userId);
+        Users user = usersService.queryUserInfo(userId);
         return HttpJSONResult.ok(user);
     }
 
@@ -101,7 +101,7 @@ public class UserCenterController extends BaseController {
                             + "?t=" + new Date().getTime();
                     log.info("用户新头像访问地址：{}", path);
                     // 更新用户头像
-                    Users dbUser = userCenterService.updateUserFace(userId, path);
+                    Users dbUser = usersService.updateUserFace(userId, path);
 
                     // 保护用户隐私信息
                     setNullProperty(dbUser);
@@ -146,7 +146,7 @@ public class UserCenterController extends BaseController {
             return HttpJSONResult.errorMap(getErrors(bindResult));
         }
 
-        Users resUser = userCenterService.updateUseUserCenterBO(userId, user);
+        Users resUser = usersService.updateUseUserCenterBO(userId, user);
         // 保护用户隐私信息
         setNullProperty(resUser);
         CookieUtils.setCookie(req, reps,

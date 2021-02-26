@@ -1,12 +1,27 @@
 package com.like.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.like.pojo.OrderStatus;
 import com.like.pojo.OrderVO;
 import com.like.pojo.Orders;
 import com.like.pojo.bo.SubmitOrderBO;
+import com.like.pojo.vo.MyOrdersVo;
+
+import java.util.List;
 
 public interface OrderService extends IService<Orders> {
+
+    /**
+     * 通过用户id和订单状态查询订单
+     *
+     * @param userId      用户id
+     * @param orderStatus 订单状态
+     * @param page        页面
+     * @param pageSize    页面大小
+     * @return {@link List <MyOrdersVo>}
+     */
+    IPage<MyOrdersVo> queryOrdersByUserIdAndOrderStatus(String userId, String orderStatus, Integer page, Integer pageSize);
 
     /**
      * 创建订单

@@ -1,5 +1,7 @@
 package com.like.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.like.enums.OrderStatusEnum;
 import com.like.enums.YesOrNo;
@@ -7,6 +9,7 @@ import com.like.mapper.OrdersMapper;
 import com.like.pojo.*;
 import com.like.pojo.bo.SubmitOrderBO;
 import com.like.pojo.vo.MerchantOrdersVO;
+import com.like.pojo.vo.MyOrdersVo;
 import com.like.service.*;
 import org.n3r.idworker.Sid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +41,18 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
     private Sid sid;
     @Autowired
     private ItemsSpecService itemsSpecService;
+
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public IPage<MyOrdersVo> queryOrdersByUserIdAndOrderStatus(String userId, String orderStatus, Integer page, Integer pageSize) {
+        HashMap<String, String> param = new HashMap<>();
+        param.put("userId", userId);
+        param.put("orderStatus", orderStatus);
+
+        Page<MyOrdersVo> pageInfo = new Page<>(page, pageSize);
+        return baseMapper.queryOrders(pageInfo, param);
+
+    }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)

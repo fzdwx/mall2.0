@@ -5,12 +5,16 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.like.mapper.UsersMapper;
 import com.like.pojo.Users;
 import com.like.pojo.bo.UserBo;
+import com.like.pojo.bo.center.UserCenterBo;
 import com.like.service.UsersService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 /**
  * @author like
@@ -23,6 +27,37 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
 
     @Autowired
     private UsersMapper usersMapper;
+
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public Users queryUserInfo(String userId) {
+        Users dbUser = baseMapper.selectById(userId);
+        dbUser.setPassword(null);
+        return dbUser;
+    }
+
+    @Override
+    public Users updateUseUserCenterBO(String userId, UserCenterBo user) {
+        Users updateUsers = new Users();
+        BeanUtils.copyProperties(user, updateUsers);
+
+        updateUsers.setId(userId);
+        updateUsers.setUpdatedTime(new Date());
+
+        updateById(updateUsers);
+
+        return updateUsers;
+    }
+
+    @Override
+    public Users updateUserFace(String userId, String url) {
+        Users users = new Users();
+        users.setId(userId);
+        users.setFace(url);
+        updateById(users);
+
+        return queryUserInfo(userId);
+    }
 
     @Transactional(propagation = Propagation.SUPPORTS)
     @Override
