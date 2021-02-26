@@ -22,12 +22,11 @@ public class MyOrdersController extends BaseController {
     @Autowired
     OrderCenterService orderCenterService;
 
-    @PostMapping("{userId}/{orderStatus}")
+    @PostMapping("/{userId}")
     public HttpJSONResult queryMyOrders(@PathVariable String userId,
-                                        @PathVariable String orderStatus,
-                                        @RequestParam Integer page,
-                                        @RequestParam Integer pageSize) {
-
+                                        @RequestParam("orderStatus") String orderStatus,
+                                        @RequestParam("page") Integer page,
+                                        @RequestParam("pageSize") Integer pageSize) {
         if (StringUtils.isBlank(userId)) {
             return HttpJSONResult.errorMsg(null);
         }
@@ -37,7 +36,9 @@ public class MyOrdersController extends BaseController {
         if (pageSize == null) {
             pageSize = DEFAULT_PAGESIZE;
         }
-
+        if (StringUtils.isBlank(orderStatus)) {
+            orderStatus = null;
+        }
         IPage<MyOrdersVo> myOrders = orderCenterService.queryOrdersByUserIdAndOrderStatus(userId, orderStatus, page, pageSize);
         return HttpJSONResult.ok(myOrders);
     }

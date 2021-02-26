@@ -17,7 +17,7 @@ public class MyOrdersVo {
     private String orderId;
     private Date createdTime;
     private Integer payMethod;
-    private Integer reaPayAmount;
+    private Integer realPayAmount;
     private Integer postAmount;
     private Integer isComment;
     private Integer orderStatus;
