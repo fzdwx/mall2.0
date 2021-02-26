@@ -8,6 +8,8 @@ import com.like.pojo.Orders;
 import com.like.pojo.vo.MyOrdersVo;
 import com.like.service.center.OrderCenterService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 
@@ -20,6 +22,7 @@ import java.util.HashMap;
 public class OrderCenterServiceImpl extends ServiceImpl<OrdersMapper, Orders> implements OrderCenterService {
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public IPage<MyOrdersVo> queryOrdersByUserIdAndOrderStatus(String userId, String orderStatus, Integer page, Integer pageSize) {
         HashMap<String, String> param = new HashMap<>();
         param.put("userId", userId);
