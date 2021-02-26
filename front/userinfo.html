@@ -354,7 +354,7 @@
                 var serverUrl = app.serverUrl;
                 axios.defaults.withCredentials = true;
                 axios.get(
-                    serverUrl + '/center/userInfo/' + userInfo.id,
+                    serverUrl + '/userInfo/' + userInfo.id,
                     {
                         headers: {
                             'headerUserId': userInfo.id,

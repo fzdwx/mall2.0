@@ -44,9 +44,16 @@ import java.util.Map;
 public class UserCenterController extends BaseController {
 
     @Autowired
-    UserCenterService userCenterService;
+    private UserCenterService userCenterService;
     @Autowired
-    FileUpload fileUpload;
+    private FileUpload fileUpload;
+
+    @GetMapping("/{userId}")
+    @ApiOperation(value = "获取用户信息", notes = "获取用户信息")
+    public HttpJSONResult queryUserInfo(@PathVariable String userId) {
+        Users user = userCenterService.queryUserInfo(userId);
+        return HttpJSONResult.ok(user);
+    }
 
     @PostMapping("userface")
     @ApiOperation(value = "修改用户头像", notes = "修改用户头像")
