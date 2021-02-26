@@ -191,6 +191,7 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
     @Transactional(propagation = Propagation.REQUIRED)
     public boolean deleteOrder(String userId, String orderId) {
         Orders o = new Orders();
+        o.setId(orderId);
         o.setUserId(userId);
         o.setUpdatedTime(new Date());
         o.setIsDelete(YesOrNo.YES.code);
@@ -205,8 +206,8 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         orderStatus.setSuccessTime(new Date());
         orderStatus.setOrderStatus(OrderStatusEnum.SUCCESS.type);
         QueryWrapper<OrderStatus> query = new QueryWrapper<OrderStatus>()
-                .eq(OrderStatus.COL_ORDER_STATUS, OrderStatusEnum.WAIT_RECEIVE)
-                .eq("orderId", orderId);
+                .eq(OrderStatus.COL_ORDER_STATUS, OrderStatusEnum.WAIT_RECEIVE.type)
+                .eq("order_id", orderId);
 
         return orderStatusService.update(orderStatus, query);
     }
