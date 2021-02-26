@@ -1,24 +1,67 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.like.mapper.OrdersMapper" >
-  <resultMap id="BaseResultMap" type="com.like.pojo.Orders" >
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" property="id" jdbcType="VARCHAR" />
-    <result column="user_id" property="userId" jdbcType="VARCHAR" />
-    <result column="receiver_name" property="receiverName" jdbcType="VARCHAR" />
-    <result column="receiver_mobile" property="receiverMobile" jdbcType="VARCHAR" />
-    <result column="receiver_address" property="receiverAddress" jdbcType="VARCHAR" />
-    <result column="total_amount" property="totalAmount" jdbcType="INTEGER" />
-    <result column="real_pay_amount" property="realPayAmount" jdbcType="INTEGER" />
-    <result column="post_amount" property="postAmount" jdbcType="INTEGER" />
-    <result column="pay_method" property="payMethod" jdbcType="INTEGER" />
-    <result column="left_msg" property="leftMsg" jdbcType="VARCHAR" />
-    <result column="extand" property="extand" jdbcType="VARCHAR" />
-    <result column="is_comment" property="isComment" jdbcType="INTEGER" />
-    <result column="is_delete" property="isDelete" jdbcType="INTEGER" />
-    <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
-    <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
-  </resultMap>
+<mapper namespace="com.like.mapper.OrdersMapper">
+    <resultMap id="BaseResultMap" type="com.like.pojo.Orders">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="receiver_name" property="receiverName" jdbcType="VARCHAR"/>
+        <result column="receiver_mobile" property="receiverMobile" jdbcType="VARCHAR"/>
+        <result column="receiver_address" property="receiverAddress" jdbcType="VARCHAR"/>
+        <result column="total_amount" property="totalAmount" jdbcType="INTEGER"/>
+        <result column="real_pay_amount" property="realPayAmount" jdbcType="INTEGER"/>
+        <result column="post_amount" property="postAmount" jdbcType="INTEGER"/>
+        <result column="pay_method" property="payMethod" jdbcType="INTEGER"/>
+        <result column="left_msg" property="leftMsg" jdbcType="VARCHAR"/>
+        <result column="extand" property="extand" jdbcType="VARCHAR"/>
+        <result column="is_comment" property="isComment" jdbcType="INTEGER"/>
+        <result column="is_delete" property="isDelete" jdbcType="INTEGER"/>
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
+        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap id="myOrdersVo" type="com.like.pojo.vo.MyOrdersVo">
+        <result column="orderId" property="orderId"/>
+        <result column="createdTime" property="createdTime"/>
+        <result column="payMethod" property="payMethod"/>
+        <result column="reaPayAmount" property="reaPayAmount"/>
+        <result column="postAmount" property="postAmount"/>
+        <result column="isComment" property="isComment"/>
+        <result column="orderStatus" property="orderStatus"/>
+        <collection property="subOrders" ofType="com.like.pojo.vo.MySubOrderItemVo">
+            <result column="itemId" property="itemId"/>
+            <result column="itemImg" property="itemImg"/>
+            <result column="itemName" property="itemName"/>
+            <result column="itemSpecName" property="itemSpecName"/>
+            <result column="buyCounts" property="buyCounts"/>
+            <result column="price" property="price"/>
+        </collection>
+    </resultMap>
+
+    <select id="queryOrders" resultMap="myOrdersVo" parameterType="map">
+        select o.id              as orderId,
+               o.created_time    as createdTime,
+               o.pay_method      as payMethod,
+               o.real_pay_amount as reaPayAmount,
+               o.post_amount     as postAmount,
+               o.is_comment      as isComment,
+               os.order_status   as orderStatus,
+               oi.item_id        as itemId,
+               oi.item_img       as itemImg,
+               oi.item_name      as itemName,
+               oi.item_spec_id   as itemSpecId,
+               oi.item_spec_name as itemSpecName,
+               oi.buy_counts     as buyCounts,
+               oi.buy_counts     as buyCounts,
+               oi.price          as price
+        from orders o
+                 left join order_status os on o.id = os.order_id
+                 left outer join order_items oi on o.id = oi.order_id
+        where o.user_id = #{param.userId}
+          and o.is_delete = 0
+          and os.order_status = #{param.orderStatus}
+        order by o.updated_time asc
+    </select>
 </mapper>

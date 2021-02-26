@@ -1,15 +1,16 @@
 package com.like.controller.center;
 
 import com.like.pojo.Users;
+import com.like.pojo.vo.MyOrdersVo;
+import com.like.service.center.OrderCenterService;
 import com.like.service.center.UserCenterService;
 import com.like.utils.HttpJSONResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author like
@@ -23,10 +24,20 @@ public class CenterController {
     @Autowired
     UserCenterService userCenterService;
 
+    @Autowired
+    OrderCenterService orderCenterService;
+
     @GetMapping("userInfo/{userId}")
     @ApiOperation(value = "获取用户信息", notes = "获取用户信息")
     public HttpJSONResult queryUserInfo(@PathVariable String userId) {
         Users user = userCenterService.queryUserInfo(userId);
         return HttpJSONResult.ok(user);
+    }
+
+    @PostMapping("orders/{userId}/{orderStatus}")
+    public HttpJSONResult queryMyOrders(@PathVariable String userId,
+                                        @PathVariable String orderStatus) {
+        List<MyOrdersVo> myOrders = orderCenterService.queryOrdersByUserIdAndOrderStatus(userId, orderStatus);
+        return HttpJSONResult.ok(myOrders);
     }
 }
