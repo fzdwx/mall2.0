@@ -30,6 +30,10 @@ spring:
       pool-name: DataSourceHikariCP                 # 连接池名字
       max-lifetime: 1800000                         # 连接的生命时长
       connection-test-query: Select 1
+  servlet:
+    multipart:
+      max-request-size: 512000                      # 请求大小限制
+      max-file-size: 512000                         # 文件上传大小限制
 
 ##################################################
 #
