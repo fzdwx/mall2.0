@@ -1,5 +1,6 @@
 package com.like.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -181,7 +182,32 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public OrderStatus queryPaidOrderInfo(String orderId) {
         return orderStatusService.getById(orderId);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public boolean deleteOrder(String userId, String orderId) {
+        Orders o = new Orders();
+        o.setUserId(userId);
+        o.setUpdatedTime(new Date());
+        o.setIsDelete(YesOrNo.YES.code);
+
+        return updateById(o);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public boolean updateOrderStatusToReceive(String orderId) {
+        OrderStatus orderStatus = new OrderStatus();
+        orderStatus.setSuccessTime(new Date());
+        orderStatus.setOrderStatus(OrderStatusEnum.SUCCESS.type);
+        QueryWrapper<OrderStatus> query = new QueryWrapper<OrderStatus>()
+                .eq(OrderStatus.COL_ORDER_STATUS, OrderStatusEnum.WAIT_RECEIVE)
+                .eq("orderId", orderId);
+
+        return orderStatusService.update(orderStatus, query);
     }
 }

@@ -45,4 +45,21 @@ public interface OrderService extends IService<Orders> {
      * @param orderId 订单id
      */
     OrderStatus queryPaidOrderInfo(String orderId);
+
+    /**
+     * 订单删除 - 逻辑删除
+     *
+     * @param userId  用户id
+     * @param orderId 订单id
+     * @return boolean
+     */
+    boolean deleteOrder(String userId, String orderId);
+
+    /**
+     * 更新订单状态到收货
+     *
+     * @param orderId 订单id
+     * @return boolean
+     */
+    boolean updateOrderStatusToReceive(String orderId);
 }

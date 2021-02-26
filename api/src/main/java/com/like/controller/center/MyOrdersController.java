@@ -68,15 +68,29 @@ public class MyOrdersController extends BaseController {
      * @param orderId 订单id
      * @return {@link HttpJSONResult}
      */
-    @GetMapping("/receive/{userId}/{orderId}")
-    @ApiOperation(value = "模拟商家发货", tags = "模拟商家发货")
+    @PostMapping("/receive/{userId}/{orderId}")
+    @ApiOperation(value = "用户收货", tags = "用户收货")
     public HttpJSONResult receive(@PathVariable String orderId, @PathVariable String userId) {
         HttpJSONResult check = checkUserMapOrder(userId, orderId);
         if (check.getStatus() != HttpStatus.HTTP_OK) {
             return check;
         }
 
-        orderService.updateOrderStatus(orderId, OrderStatusEnum.SUCCESS.type);
+        boolean res = orderService.updateOrderStatusToReceive(orderId);
+        if (!res) {
+            return HttpJSONResult.errorMsg("收货失败");
+        }
+        return HttpJSONResult.ok();
+    }
+
+    @DeleteMapping("/delete/{userId}/{orderId}")
+    @ApiOperation(value = "删除订单", tags = "删除订单")
+    public HttpJSONResult delete(@PathVariable String orderId, @PathVariable String userId) {
+        boolean res = orderService.deleteOrder(userId, orderId);
+        if (!res) {
+            return HttpJSONResult.errorMsg("删除订单失败");
+        }
+
         return HttpJSONResult.ok();
     }
 
