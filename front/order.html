@@ -404,7 +404,7 @@
                 axios.defaults.withCredentials = true;
                 axios.post(
                     serverUrl + '/center/orders/' + userInfo.id + "/" + orderStatus +
-                    "&page=" + page +
+                    "?page=" + page +
                     "&pageSize=" + pageSize, {}, {
                         headers: {
                             'headerUserId': userInfo.id,

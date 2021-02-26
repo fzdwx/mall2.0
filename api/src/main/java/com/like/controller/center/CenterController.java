@@ -1,5 +1,6 @@
 package com.like.controller.center;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.like.pojo.Users;
 import com.like.pojo.vo.MyOrdersVo;
 import com.like.service.center.OrderCenterService;
@@ -9,8 +10,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * @author like
@@ -36,8 +35,10 @@ public class CenterController {
 
     @PostMapping("orders/{userId}/{orderStatus}")
     public HttpJSONResult queryMyOrders(@PathVariable String userId,
-                                        @PathVariable String orderStatus) {
-        List<MyOrdersVo> myOrders = orderCenterService.queryOrdersByUserIdAndOrderStatus(userId, orderStatus);
+                                        @PathVariable String orderStatus,
+                                        @RequestParam Integer page,
+                                        @RequestParam Integer pageSize) {
+        IPage<MyOrdersVo> myOrders = orderCenterService.queryOrdersByUserIdAndOrderStatus(userId, orderStatus, page, pageSize);
         return HttpJSONResult.ok(myOrders);
     }
 }

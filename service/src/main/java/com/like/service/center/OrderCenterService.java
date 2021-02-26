@@ -1,5 +1,6 @@
 package com.like.service.center;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.like.pojo.Orders;
 import com.like.pojo.vo.MyOrdersVo;
@@ -18,7 +19,9 @@ public interface OrderCenterService extends IService<Orders> {
      *
      * @param userId      用户id
      * @param orderStatus 订单状态
-     * @return
+     * @param page        页面
+     * @param pageSize    页面大小
+     * @return {@link List<MyOrdersVo>}
      */
-    List<MyOrdersVo> queryOrdersByUserIdAndOrderStatus(String userId, String orderStatus);
+    IPage<MyOrdersVo> queryOrdersByUserIdAndOrderStatus(String userId, String orderStatus, Integer page, Integer pageSize);
 }
