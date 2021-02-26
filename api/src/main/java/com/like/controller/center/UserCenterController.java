@@ -68,7 +68,13 @@ public class UserCenterController extends BaseController {
                 String finallyFacePath;
                 if (StringUtils.isNotBlank(rawName)) {   // face-{userId}.png
                     String[] s = rawName.split("\\.");
-                    suffix = s[s.length - 1];
+                    suffix = s[s.length - 1];  // 获取后缀名
+
+                    if (!suffix.equalsIgnoreCase("png") &&
+                            !suffix.equalsIgnoreCase("jpg") &&
+                            !suffix.equalsIgnoreCase("jpeg")) {
+                        return HttpJSONResult.errorMsg("图片格式不正确，必须为png，jpg，jpeg");
+                    }
 
                     String newName = "face-" + userId + "." + suffix;
 
