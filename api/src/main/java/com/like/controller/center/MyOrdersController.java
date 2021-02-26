@@ -1,8 +1,11 @@
 package com.like.controller.center;
 
+import cn.hutool.http.HttpStatus;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.like.controller.BaseController;
 import com.like.enums.OrderStatusEnum;
+import com.like.enums.YesOrNo;
+import com.like.pojo.Orders;
 import com.like.pojo.vo.MyOrdersVo;
 import com.like.service.OrderService;
 import com.like.service.center.OrderCenterService;
@@ -59,6 +62,36 @@ public class MyOrdersController extends BaseController {
     @ApiOperation(value = "模拟商家发货", tags = "模拟商家发货")
     public HttpJSONResult delivery(@PathVariable String orderId) {
         orderService.updateOrderStatus(orderId, OrderStatusEnum.WAIT_RECEIVE.type);
+        return HttpJSONResult.ok();
+    }
+
+    /**
+     * 用户收货
+     *
+     * @param orderId 订单id
+     * @return {@link HttpJSONResult}
+     */
+    @GetMapping("/receive/{userId}/{orderId}")
+    @ApiOperation(value = "模拟商家发货", tags = "模拟商家发货")
+    public HttpJSONResult receive(@PathVariable String orderId, @PathVariable String userId) {
+        HttpJSONResult check = checkUserMapOrder(userId, orderId);
+        if (check.getStatus() != HttpStatus.HTTP_OK) {
+            return check;
+        }
+
+        orderService.updateOrderStatus(orderId, OrderStatusEnum.SUCCESS.type);
+        return HttpJSONResult.ok();
+    }
+
+    private HttpJSONResult checkUserMapOrder(String userId, String orderId) {
+        Orders queryEnt = new Orders();
+        queryEnt.setId(orderId);
+        queryEnt.setUserId(userId);
+        queryEnt.setIsDelete(YesOrNo.NO.code);
+
+        if (orderService.getById(queryEnt) == null) {
+            return HttpJSONResult.errorMsg("该订单不存在");
+        }
         return HttpJSONResult.ok();
     }
 }

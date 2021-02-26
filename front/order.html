@@ -347,7 +347,7 @@
                 var serverUrl = app.serverUrl;
                 axios.defaults.withCredentials = true;
                 axios.post(
-                    serverUrl + '/orders/receive?userId=' + userInfo.id + "&orderId=" + orderId, {},
+                    serverUrl + '/myOrders/receive/' + userInfo.id + "/" + orderId, {},
                     {
                         headers: {
                             'headerUserId': userInfo.id,
