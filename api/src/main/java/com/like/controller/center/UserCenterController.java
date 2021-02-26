@@ -69,7 +69,7 @@ public class UserCenterController extends BaseController {
                 if (StringUtils.isNotBlank(rawName)) {   // face-{userId}.png
                     String[] s = rawName.split("\\.");
                     suffix = s[s.length - 1];  // 获取后缀名
-
+                    // 检测后缀
                     if (!suffix.equalsIgnoreCase("png") &&
                             !suffix.equalsIgnoreCase("jpg") &&
                             !suffix.equalsIgnoreCase("jpeg")) {
