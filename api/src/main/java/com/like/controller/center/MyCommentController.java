@@ -33,9 +33,7 @@ public class MyCommentController extends BaseController {
     @PostMapping("/pending")
     @ApiOperation(value = "查询待评价订单", tags = "查询待评价订单")
     public HttpJSONResult pending(@RequestParam("userId") String userId,
-                                  @RequestParam("orderId") String orderId,
-                                  @RequestParam("page") Integer page,
-                                  @RequestParam("pageSize") Integer pageSize) {
+                                  @RequestParam("orderId") String orderId,) {
         // 1.判断订单和用户是否相关联
         HttpJSONResult res = checkUserMapOrder(userId, orderId);
         if (res.getStatus() != HttpStatus.HTTP_OK) {
