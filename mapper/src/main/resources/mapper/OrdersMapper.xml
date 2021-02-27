@@ -73,4 +73,15 @@
         order by
         o.updated_time desc
     </select>
+    <select id="queryOrdersStatusOverview" parameterType="map" resultType="orderStatusOverviewVO">
+        select os.order_id orderId,
+        os.order_status orderStatus,
+        o.is_comment isComment
+        from orders o
+        left join order_status os on o.id = os.order_id
+        where o.user_id = #{param.userId}
+        <if test="param.isComment !=null">
+            and o.is_comment = #{param.isComment}
+        </if>
+    </select>
 </mapper>

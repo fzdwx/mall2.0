@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.like.controller.BaseController;
 import com.like.enums.OrderStatusEnum;
 import com.like.pojo.vo.MyOrdersVo;
+import com.like.pojo.vo.OrderStatusCountsVO;
 import com.like.utils.HttpJSONResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,15 +21,24 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("myOrders")
 public class MyOrdersController extends BaseController {
-//    @Autowired
-//    private OrderService orderService;
+    //    @Autowired
+    //    private OrderService orderService;
+
+    @GetMapping("/orderStatusOverview/{userId}")
+    @ApiOperation(value = "查询我的订单各个状态的数量", tags = "查询我的订单各个状态的数量")
+    public HttpJSONResult anOverviewOfMyOrdersStatus(@PathVariable String userId) {
+
+        OrderStatusCountsVO data = orderService.queryOrdersStatusOverviewCount(userId);
+        return HttpJSONResult.ok(data);
+    }
 
     @PostMapping("/{userId}")
     @ApiOperation(value = "查询我的订单", tags = "查询我的订单")
-    public HttpJSONResult queryMyOrders(@PathVariable String userId,
-                                        @RequestParam("orderStatus") String orderStatus,
-                                        @RequestParam("page") Integer page,
-                                        @RequestParam("pageSize") Integer pageSize) {
+    public HttpJSONResult queryMyOrders(
+            @PathVariable String userId,
+            @RequestParam("orderStatus") String orderStatus,
+            @RequestParam("page") Integer page,
+            @RequestParam("pageSize") Integer pageSize) {
         if (StringUtils.isBlank(userId)) {
             return HttpJSONResult.errorMsg(null);
         }
@@ -41,7 +51,8 @@ public class MyOrdersController extends BaseController {
         if (StringUtils.isBlank(orderStatus)) {
             orderStatus = null;
         }
-        IPage<MyOrdersVo> myOrders = orderService.queryOrdersByUserIdAndOrderStatus(userId, orderStatus, page, pageSize);
+        IPage<MyOrdersVo> myOrders =
+                orderService.queryOrdersByUserIdAndOrderStatus(userId, orderStatus, page, pageSize);
         return HttpJSONResult.ok(myOrders);
     }
 

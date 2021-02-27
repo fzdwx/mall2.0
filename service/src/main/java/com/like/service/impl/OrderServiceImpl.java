@@ -11,6 +11,8 @@ import com.like.pojo.*;
 import com.like.pojo.bo.SubmitOrderBO;
 import com.like.pojo.vo.MerchantOrdersVO;
 import com.like.pojo.vo.MyOrdersVo;
+import com.like.pojo.vo.OrderStatusCountsVO;
+import com.like.pojo.vo.OrderStatusOverviewVO;
 import com.like.service.*;
 import org.n3r.idworker.Sid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,22 +39,22 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
     @Autowired
     private ItemService itemService;
     @Autowired
+    private ItemsSpecService itemsSpecService;
+    @Autowired
     private OrderStatusService orderStatusService;
     @Autowired
     private Sid sid;
-    @Autowired
-    private ItemsSpecService itemsSpecService;
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS)
-    public IPage<MyOrdersVo> queryOrdersByUserIdAndOrderStatus(String userId, String orderStatus, Integer page, Integer pageSize) {
+    public IPage<MyOrdersVo> queryOrdersByUserIdAndOrderStatus(
+            String userId, String orderStatus, Integer page, Integer pageSize) {
         HashMap<String, String> param = new HashMap<>();
         param.put("userId", userId);
         param.put("orderStatus", orderStatus);
 
         Page<MyOrdersVo> pageInfo = new Page<>(page, pageSize);
         return baseMapper.queryOrders(pageInfo, param);
-
     }
 
     @Override
@@ -73,10 +75,14 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         order.setUserId(userId);
         order.setReceiverName(address.getReceiver());
         order.setReceiverMobile(address.getMobile());
-        order.setReceiverAddress(address.getProvince() + " " +
-                address.getCity() + " " +
-                address.getDistrict() + " " +
-                address.getDetail());
+        order.setReceiverAddress(
+                address.getProvince()
+                        + " "
+                        + address.getCity()
+                        + " "
+                        + address.getDistrict()
+                        + " "
+                        + address.getDetail());
         order.setPostAmount(postAmount);
         order.setPayMethod(payMethod);
         order.setLeftMsg(leftMsg);
@@ -93,11 +99,12 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         // 根据specIds获取价格
         String[] s = itemSpecIds.split(",");
         List<ItemsSpec> specs = itemService.queryItemSpecListBySpecIds(Arrays.asList(s));
-        specs.forEach(a -> {
-            // TODO: 2021/2/19 整合redis后商品购买数量重新从redis中获取
-            totalAmount.updateAndGet(v -> v + a.getPriceNormal() * buyCount);
-            realPayAmount.updateAndGet(v -> v + a.getPriceDiscount() * buyCount);
-        });
+        specs.forEach(
+                a -> {
+                    // TODO: 2021/2/19 整合redis后商品购买数量重新从redis中获取
+                    totalAmount.updateAndGet(v -> v + a.getPriceNormal() * buyCount);
+                    realPayAmount.updateAndGet(v -> v + a.getPriceDiscount() * buyCount);
+                });
         order.setTotalAmount(totalAmount.get());
         order.setRealPayAmount(realPayAmount.get());
 
@@ -106,12 +113,11 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         // 2.保存子订单信息
         ArrayList<OrderItems> saveOrderItems = new ArrayList<>();
 
-        Map<String, ItemsSpec> itemIdMapSpec = specs.stream()
-                .collect(Collectors.toMap(ItemsSpec::getItemId, e -> e));
+        Map<String, ItemsSpec> itemIdMapSpec =
+                specs.stream().collect(Collectors.toMap(ItemsSpec::getItemId, e -> e));
         // a.根据specId获取itemId获取items
-        List<String> itemIds = specs.stream()
-                .map(ItemsSpec::getItemId)
-                .collect(Collectors.toList());
+        List<String> itemIds =
+                specs.stream().map(ItemsSpec::getItemId).collect(Collectors.toList());
         List<Items> items = itemService.queryItemList(itemIds);
 
         // b.根据itemId获取对应的主图片路径
@@ -146,18 +152,18 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
 
         orderStatusService.save(waitPayOrderStatus);
 
-
         // 4.扣除库存
-//        itemIdMapSpec.forEach((itemId, spec) -> {
-//            Integer stock = spec.getStock();
-//            if (stock > buyCount) {
-//                spec.setStock(stock - buyCount);
-//            }
-//        });
-//        itemsSpecService.updateBatchById(itemIdMapSpec.values());
-        itemIdMapSpec.forEach((itemId, spec) -> {
-            itemsSpecService.decreaseItemSpecStock(spec.getId(), buyCount);
-        });
+        //        itemIdMapSpec.forEach((itemId, spec) -> {
+        //            Integer stock = spec.getStock();
+        //            if (stock > buyCount) {
+        //                spec.setStock(stock - buyCount);
+        //            }
+        //        });
+        //        itemsSpecService.updateBatchById(itemIdMapSpec.values());
+        itemIdMapSpec.forEach(
+                (itemId, spec) -> {
+                    itemsSpecService.decreaseItemSpecStock(spec.getId(), buyCount);
+                });
 
         // 5.构建商户订单 用于传给支付中心
         MerchantOrdersVO merchant = new MerchantOrdersVO();
@@ -205,10 +211,47 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         OrderStatus orderStatus = new OrderStatus();
         orderStatus.setSuccessTime(new Date());
         orderStatus.setOrderStatus(OrderStatusEnum.SUCCESS.type);
-        QueryWrapper<OrderStatus> query = new QueryWrapper<OrderStatus>()
-                .eq(OrderStatus.COL_ORDER_STATUS, OrderStatusEnum.WAIT_RECEIVE.type)
-                .eq("order_id", orderId);
+        QueryWrapper<OrderStatus> query =
+                new QueryWrapper<OrderStatus>()
+                        .eq(OrderStatus.COL_ORDER_STATUS, OrderStatusEnum.WAIT_RECEIVE.type)
+                        .eq("order_id", orderId);
 
         return orderStatusService.update(orderStatus, query);
+    }
+
+    @Override
+    public OrderStatusCountsVO queryOrdersStatusOverviewCount(String userId) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("userId", userId);
+        // 1.找到所有当前用户的订单的状态信息
+        List<OrderStatusOverviewVO> rawList = baseMapper.queryOrdersStatusOverview(param);
+        // 2.根据订单状态分组
+        Map<Integer, List<OrderStatusOverviewVO>> grpMap =
+                rawList.stream()
+                        .collect(Collectors.groupingBy(OrderStatusOverviewVO::getOrderStatus));
+        // 3.统计对应的个数
+        OrderStatusCountsVO res = new OrderStatusCountsVO();
+        grpMap.forEach(
+                (status, list) -> {
+                    if (Objects.equals(status, OrderStatusEnum.WAIT_PAY.type)) {
+                        res.setWaitPayCounts(list.size());
+                    } else if (Objects.equals(status, OrderStatusEnum.WAIT_DELIVER.type)) {
+                        res.setWaitDeliverCounts(list.size());
+                    } else if (Objects.equals(status, OrderStatusEnum.SUCCESS.type)) {
+                        res.setWaitCommentCounts(
+                                (int)
+                                        list.stream()
+                                                .filter(
+                                                        o ->
+                                                                Objects.equals(
+                                                                        o.getIsComment(),
+                                                                        YesOrNo.NO.code))
+                                                .count());
+                    } else if (Objects.equals(status, OrderStatusEnum.WAIT_RECEIVE.type)) {
+                        res.setWaitReceiveCounts(list.size());
+                    }
+                });
+
+        return res;
     }
 }

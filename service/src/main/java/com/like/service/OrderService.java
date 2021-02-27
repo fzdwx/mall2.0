@@ -7,6 +7,7 @@ import com.like.pojo.OrderVO;
 import com.like.pojo.Orders;
 import com.like.pojo.bo.SubmitOrderBO;
 import com.like.pojo.vo.MyOrdersVo;
+import com.like.pojo.vo.OrderStatusCountsVO;
 
 import java.util.List;
 
@@ -21,7 +22,8 @@ public interface OrderService extends IService<Orders> {
      * @param pageSize    页面大小
      * @return {@link List <MyOrdersVo>}
      */
-    IPage<MyOrdersVo> queryOrdersByUserIdAndOrderStatus(String userId, String orderStatus, Integer page, Integer pageSize);
+    IPage<MyOrdersVo> queryOrdersByUserIdAndOrderStatus(
+            String userId, String orderStatus, Integer page, Integer pageSize);
 
     /**
      * 创建订单
@@ -35,7 +37,7 @@ public interface OrderService extends IService<Orders> {
      * 更新订单状态
      *
      * @param merchantOrderId 商人订单id
-     * @param status          状态
+     * @param status 状态
      */
     void updateOrderStatus(String merchantOrderId, Integer status);
 
@@ -62,4 +64,12 @@ public interface OrderService extends IService<Orders> {
      * @return boolean
      */
     boolean updateOrderStatusToReceive(String orderId);
+
+    /**
+     * 查询订单状态统计概述
+     *
+     * @param userId 用户id
+     * @return
+     */
+    OrderStatusCountsVO queryOrdersStatusOverviewCount(String userId);
 }
