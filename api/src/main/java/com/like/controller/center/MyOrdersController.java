@@ -30,7 +30,7 @@ public class MyOrdersController extends BaseController {
      * @return {@link HttpJSONResult}
      */
     @GetMapping("/trend/{userId}")
-    @ApiOperation(value = "查询我的订单各个状态的数量", tags = "查询我的订单各个状态的数量")
+    @ApiOperation(value = "用户中心 展示订单动向", tags = "用户中心 展示订单动向")
     public HttpJSONResult orderTrend(
             @PathVariable String userId,
             @RequestParam("page") Integer page,
