@@ -1,5 +1,7 @@
 package com.like.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.like.enums.YesOrNo;
 import com.like.mapper.ItemsCommentsMapper;
@@ -7,6 +9,7 @@ import com.like.pojo.ItemsComments;
 import com.like.pojo.OrderStatus;
 import com.like.pojo.Orders;
 import com.like.pojo.bo.center.OrderItemsCommentBO;
+import com.like.pojo.vo.MyCommentVO;
 import com.like.service.ItemsCommentsService;
 import com.like.service.OrderService;
 import com.like.service.OrderStatusService;
@@ -45,6 +48,8 @@ public class ItemsCommentsServiceImpl extends ServiceImpl<ItemsCommentsMapper, I
             BeanUtils.copyProperties(c, ic);
             ic.setId(sid.nextShort());
             ic.setUserId(userId);
+            ic.setCreatedTime(new Date());
+            ic.setSepcName(c.getItemSpecName());
             return ic;
         }).collect(Collectors.toList());
         saveBatch(insertData);
@@ -60,5 +65,10 @@ public class ItemsCommentsServiceImpl extends ServiceImpl<ItemsCommentsMapper, I
         orderStatus.setOrderId(orderId);
         orderStatus.setCommentTime(new Date());
         orderStatusService.updateById(orderStatus);
+    }
+
+    @Override
+    public IPage<MyCommentVO> queryCommentList(Integer page, Integer pageSize, String userId) {
+        return baseMapper.queryCommentList(new Page<>(page, pageSize), userId);
     }
 }

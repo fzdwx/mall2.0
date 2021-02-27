@@ -1,16 +1,19 @@
 package com.like.controller.center;
 
 import cn.hutool.http.HttpStatus;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.like.controller.BaseController;
 import com.like.enums.YesOrNo;
 import com.like.pojo.OrderItems;
 import com.like.pojo.Orders;
 import com.like.pojo.bo.center.OrderItemsCommentBO;
+import com.like.pojo.vo.MyCommentVO;
 import com.like.service.ItemsCommentsService;
 import com.like.service.OrderItemsService;
 import com.like.utils.HttpJSONResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +32,25 @@ public class MyCommentController extends BaseController {
     private OrderItemsService orderItemsService;
     @Autowired
     private ItemsCommentsService itemsCommentsService;
+
+    @GetMapping("/list/{userId}")
+    @ApiOperation(value = "查询我的所有评价", tags = "查询我的所有评价")
+    public HttpJSONResult list(@PathVariable String userId,
+                               @RequestParam("page") Integer page,
+                               @RequestParam("pageSize") Integer pageSize) {
+        if (StringUtils.isBlank(userId)) {
+            return HttpJSONResult.errorMsg("用户id不能为空");
+        }
+        if (page == null || page < 0) {
+            page = 1;
+        }
+        if (pageSize == null || pageSize < 0) {
+            pageSize = DEFAULT_PAGESIZE;
+        }
+        IPage<MyCommentVO> pageData = itemsCommentsService.queryCommentList(page, pageSize, userId);
+
+        return HttpJSONResult.ok(pageData);
+    }
 
     @PostMapping("/save")
     @ApiOperation(value = "保存评论", tags = "保存评论")
