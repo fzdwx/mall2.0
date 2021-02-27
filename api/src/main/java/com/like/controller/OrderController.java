@@ -56,7 +56,7 @@ public class OrderController extends BaseController {
         headers.add("password", "imooc");
 
         order.getMerchant().setAmount(1);// TODO: 2021/2/21  测试
-
+        // 发送请求到支付中心，创建订单
         ResponseEntity<HttpJSONResult> resp = restTemplate.postForEntity(
                 paymentUrl,
                 new HttpEntity<MerchantOrdersVO>(order.getMerchant(), headers),

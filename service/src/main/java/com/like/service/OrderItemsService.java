@@ -3,6 +3,8 @@ package com.like.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.like.pojo.OrderItems;
 
+import java.util.List;
+
 /**
  * @author like
  * @email 980650920@qq.com
@@ -10,4 +12,5 @@ import com.like.pojo.OrderItems;
  */
 public interface OrderItemsService extends IService<OrderItems> {
 
+    List<OrderItems> queryOrderItems(String orderId);
 }
