@@ -5,15 +5,14 @@ import com.like.controller.BaseController;
 import com.like.enums.YesOrNo;
 import com.like.pojo.OrderItems;
 import com.like.pojo.Orders;
+import com.like.pojo.bo.center.OrderItemsCommentBO;
+import com.like.service.ItemsCommentsService;
 import com.like.service.OrderItemsService;
 import com.like.utils.HttpJSONResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,7 +27,29 @@ import java.util.List;
 public class MyCommentController extends BaseController {
     @Autowired
     private OrderItemsService orderItemsService;
+    @Autowired
+    private ItemsCommentsService itemsCommentsService;
 
+    @PostMapping("/save")
+    @ApiOperation(value = "保存评论", tags = "保存评论")
+    public HttpJSONResult saveComments(@RequestBody List<OrderItemsCommentBO> data,
+                                       @RequestParam("userId") String userId,
+                                       @RequestParam("orderId") String orderId) {
+        // 1.判断订单和用户是否相关联
+        HttpJSONResult res = checkUserMapOrder(userId, orderId);
+        if (res.getStatus() != HttpStatus.HTTP_OK) {
+            return res;
+        }
+        // 2.评论类容判断不能为空
+        if (data == null || data.isEmpty()) {
+            return HttpJSONResult.errorMsg("评论内容不能为空");
+        }
+        // 3.保存评论
+        itemsCommentsService.saveComments(userId, orderId, data);
+
+
+        return HttpJSONResult.ok();
+    }
 
     @PostMapping("/pending")
     @ApiOperation(value = "查询订单中待评价的商品", tags = "查询订单中待评价的商品")

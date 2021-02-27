@@ -185,7 +185,7 @@
                 var serverUrl = app.serverUrl;
                 axios.defaults.withCredentials = true;
                 axios.post(
-                    serverUrl + '/comments?userId=' + userInfo.id + "&orderId=" + this.orderId,
+                    serverUrl + '/myComment/save/?userId=' + userInfo.id + "&orderId=" + this.orderId,
                     orderItemList,
                     {
                         headers: {
