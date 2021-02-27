@@ -6,6 +6,7 @@ import com.like.controller.BaseController;
 import com.like.enums.OrderStatusEnum;
 import com.like.pojo.vo.MyOrdersVo;
 import com.like.pojo.vo.OrderStatusCountsVO;
+import com.like.pojo.vo.OrderTrendVO;
 import com.like.utils.HttpJSONResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,13 +22,39 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("myOrders")
 public class MyOrdersController extends BaseController {
-    //    @Autowired
-    //    private OrderService orderService;
+
+    /**
+     * 订单动向
+     *
+     * @param userId 用户id
+     * @return {@link HttpJSONResult}
+     */
+    @GetMapping("/trend/{userId}")
+    @ApiOperation(value = "查询我的订单各个状态的数量", tags = "查询我的订单各个状态的数量")
+    public HttpJSONResult orderTrend(
+            @PathVariable String userId,
+            @RequestParam("page") Integer page,
+            @RequestParam("pageSize") Integer pageSize) {
+        if (StringUtils.isBlank(userId)) {
+            return HttpJSONResult.errorMsg(null);
+        }
+        if (page == null) {
+            page = 1;
+        }
+        if (pageSize == null) {
+            pageSize = DEFAULT_PAGESIZE;
+        }
+
+        IPage<OrderTrendVO> data = orderService.queryOrderTrend(page, pageSize, userId);
+        return HttpJSONResult.ok(data);
+    }
 
     @GetMapping("/orderStatusOverview/{userId}")
     @ApiOperation(value = "查询我的订单各个状态的数量", tags = "查询我的订单各个状态的数量")
     public HttpJSONResult anOverviewOfMyOrdersStatus(@PathVariable String userId) {
-
+        if (StringUtils.isBlank(userId)) {
+            return HttpJSONResult.errorMsg(null);
+        }
         OrderStatusCountsVO data = orderService.queryOrdersStatusOverviewCount(userId);
         return HttpJSONResult.ok(data);
     }

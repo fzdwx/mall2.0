@@ -9,10 +9,7 @@ import com.like.enums.YesOrNo;
 import com.like.mapper.OrdersMapper;
 import com.like.pojo.*;
 import com.like.pojo.bo.SubmitOrderBO;
-import com.like.pojo.vo.MerchantOrdersVO;
-import com.like.pojo.vo.MyOrdersVo;
-import com.like.pojo.vo.OrderStatusCountsVO;
-import com.like.pojo.vo.OrderStatusOverviewVO;
+import com.like.pojo.vo.*;
 import com.like.service.*;
 import org.n3r.idworker.Sid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -220,6 +217,7 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public OrderStatusCountsVO queryOrdersStatusOverviewCount(String userId) {
         Map<String, Object> param = new HashMap<>();
         param.put("userId", userId);
@@ -253,5 +251,12 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
                 });
 
         return res;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public IPage<OrderTrendVO> queryOrderTrend(Integer page, Integer pageSize, String userId) {
+        Page<MyOrdersVo> pageInfo = new Page<>(page, pageSize);
+        return baseMapper.queryOrderTrend(pageInfo, userId);
     }
 }

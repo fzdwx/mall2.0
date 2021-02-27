@@ -8,6 +8,7 @@ import com.like.pojo.Orders;
 import com.like.pojo.bo.SubmitOrderBO;
 import com.like.pojo.vo.MyOrdersVo;
 import com.like.pojo.vo.OrderStatusCountsVO;
+import com.like.pojo.vo.OrderTrendVO;
 
 import java.util.List;
 
@@ -51,7 +52,7 @@ public interface OrderService extends IService<Orders> {
     /**
      * 订单删除 - 逻辑删除
      *
-     * @param userId  用户id
+     * @param userId 用户id
      * @param orderId 订单id
      * @return boolean
      */
@@ -72,4 +73,14 @@ public interface OrderService extends IService<Orders> {
      * @return
      */
     OrderStatusCountsVO queryOrdersStatusOverviewCount(String userId);
+
+    /**
+     * 查询订单动向
+     *
+     * @param page
+     * @param pageSize
+     * @param userId   用户id
+     * @return {@link OrderTrendVO}
+     */
+    IPage<OrderTrendVO> queryOrderTrend(Integer page, Integer pageSize, String userId);
 }

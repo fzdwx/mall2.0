@@ -261,8 +261,8 @@
                 var serverUrl = app.serverUrl;
                 axios.defaults.withCredentials = true;
                 axios.get(
-                    serverUrl + '/center/trend?userId=' + userInfo.id +
-                    "&page=" + page +
+                    serverUrl + '/myOrders/trend/' + userInfo.id +
+                    "?page=" + page +
                     "&pageSize=" + pageSize,
                     {
                         headers: {
@@ -273,7 +273,7 @@
                     .then(res => {
                         if (res.data.status == 200) {
                             var grid = res.data.data;
-                            var orderTrendList = grid.rows;
+                            var orderTrendList = grid.records;
                             // console.log(orderTrendList);
                             this.orderTrendList = orderTrendList;
 
@@ -292,8 +292,8 @@
                                 orderTrendList[i].successTime = formatedSuccessTime;
                             }
 
-                            var maxPage = grid.total; // 获得总页数
-                            var total = grid.records; // 获得总记录数
+                            var maxPage = grid.pages; // 获得总页数
+                            var total = grid.total; // 获得总记录数
 
                             this.maxPage = maxPage;
                             this.total = total;

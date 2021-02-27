@@ -6,7 +6,9 @@ import com.like.my.mapper.MyMapper;
 import com.like.pojo.OrderStatus;
 import com.like.pojo.Orders;
 import com.like.pojo.vo.MyOrdersVo;
+import com.like.pojo.vo.OrderStatusCountsVO;
 import com.like.pojo.vo.OrderStatusOverviewVO;
+import com.like.pojo.vo.OrderTrendVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -33,5 +35,15 @@ public interface OrdersMapper extends MyMapper<Orders> {
      * @param param 参数
      * @return {@link List<OrderStatus>}
      */
-    List<OrderStatusOverviewVO> queryOrdersStatusOverview(@Param("param") Map<String, Object> param);
+    List<OrderStatusOverviewVO> queryOrdersStatusOverview(
+            @Param("param") Map<String, Object> param);
+
+    /**
+     * 查询订单订单动向
+     *
+     * @param pageInfo
+     * @param userId   用户id
+     * @return {@link OrderStatusCountsVO}
+     */
+    IPage<OrderTrendVO> queryOrderTrend(Page<MyOrdersVo> pageInfo, @Param("userId") String userId);
 }

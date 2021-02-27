@@ -84,4 +84,20 @@
             and o.is_comment = #{param.isComment}
         </if>
     </select>
+    <select id="queryOrderTrend" resultType="com.like.pojo.vo.OrderTrendVO">
+        select os.order_id     orderId,
+               os.order_status orderStatus,
+               os.created_time createdTime,
+               os.pay_time     payTime,
+               os.deliver_time deliverTime,
+               os.success_time successTime,
+               os.close_time   closeTime,
+               os.comment_time commentTime
+        from orders o
+                 left join order_status os on o.id = os.order_id
+        where o.is_delete = 0
+          and o.user_id = #{userId}
+          and os.order_status in (20, 30, 40)
+        order by os.order_id desc
+    </select>
 </mapper>
