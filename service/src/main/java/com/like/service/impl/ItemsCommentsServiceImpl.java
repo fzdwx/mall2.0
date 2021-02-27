@@ -30,28 +30,33 @@ import java.util.stream.Collectors;
  * @since 2021-02-27 13:47
  */
 @Service
-public class ItemsCommentsServiceImpl extends ServiceImpl<ItemsCommentsMapper, ItemsComments> implements ItemsCommentsService {
+public class ItemsCommentsServiceImpl extends ServiceImpl<ItemsCommentsMapper, ItemsComments>
+        implements ItemsCommentsService {
 
-    @Autowired
-    private Sid sid;
     @Autowired
     private OrderService orderService;
     @Autowired
     private OrderStatusService orderStatusService;
+    @Autowired
+    private Sid sid;
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void saveComments(String userId, String orderId, List<OrderItemsCommentBO> commentBOs) {
         // 1.保存评价 items_comments
-        List<ItemsComments> insertData = commentBOs.stream().map(c -> {
-            ItemsComments ic = new ItemsComments();
-            BeanUtils.copyProperties(c, ic);
-            ic.setId(sid.nextShort());
-            ic.setUserId(userId);
-            ic.setCreatedTime(new Date());
-            ic.setSepcName(c.getItemSpecName());
-            return ic;
-        }).collect(Collectors.toList());
+        List<ItemsComments> insertData =
+                commentBOs.stream()
+                        .map(
+                                c -> {
+                                    ItemsComments ic = new ItemsComments();
+                                    BeanUtils.copyProperties(c, ic);
+                                    ic.setId(sid.nextShort());
+                                    ic.setUserId(userId);
+                                    ic.setCreatedTime(new Date());
+                                    ic.setSepcName(c.getItemSpecName());
+                                    return ic;
+                                })
+                        .collect(Collectors.toList());
         saveBatch(insertData);
 
         // 2.修改订单为已评价

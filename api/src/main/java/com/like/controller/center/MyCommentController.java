@@ -29,15 +29,16 @@ import java.util.List;
 @RequestMapping("myComment")
 public class MyCommentController extends BaseController {
     @Autowired
-    private OrderItemsService orderItemsService;
-    @Autowired
     private ItemsCommentsService itemsCommentsService;
+    @Autowired
+    private OrderItemsService orderItemsService;
 
     @GetMapping("/list/{userId}")
     @ApiOperation(value = "查询我的所有评价", tags = "查询我的所有评价")
-    public HttpJSONResult list(@PathVariable String userId,
-                               @RequestParam("page") Integer page,
-                               @RequestParam("pageSize") Integer pageSize) {
+    public HttpJSONResult list(
+            @PathVariable String userId,
+            @RequestParam("page") Integer page,
+            @RequestParam("pageSize") Integer pageSize) {
         if (StringUtils.isBlank(userId)) {
             return HttpJSONResult.errorMsg("用户id不能为空");
         }
@@ -54,9 +55,10 @@ public class MyCommentController extends BaseController {
 
     @PostMapping("/save")
     @ApiOperation(value = "保存评论", tags = "保存评论")
-    public HttpJSONResult saveComments(@RequestBody List<OrderItemsCommentBO> data,
-                                       @RequestParam("userId") String userId,
-                                       @RequestParam("orderId") String orderId) {
+    public HttpJSONResult saveComments(
+            @RequestBody List<OrderItemsCommentBO> data,
+            @RequestParam("userId") String userId,
+            @RequestParam("orderId") String orderId) {
         // 1.判断订单和用户是否相关联
         HttpJSONResult res = checkUserMapOrder(userId, orderId);
         if (res.getStatus() != HttpStatus.HTTP_OK) {
@@ -69,14 +71,13 @@ public class MyCommentController extends BaseController {
         // 3.保存评论
         itemsCommentsService.saveComments(userId, orderId, data);
 
-
         return HttpJSONResult.ok();
     }
 
     @PostMapping("/pending")
     @ApiOperation(value = "查询订单中待评价的商品", tags = "查询订单中待评价的商品")
-    public HttpJSONResult pending(@RequestParam("userId") String userId,
-                                  @RequestParam("orderId") String orderId) {
+    public HttpJSONResult pending(
+            @RequestParam("userId") String userId, @RequestParam("orderId") String orderId) {
         // 1.判断订单和用户是否相关联
         HttpJSONResult res = checkUserMapOrder(userId, orderId);
         if (res.getStatus() != HttpStatus.HTTP_OK) {
@@ -92,5 +93,4 @@ public class MyCommentController extends BaseController {
 
         return HttpJSONResult.ok(pendingList);
     }
-
 }
