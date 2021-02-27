@@ -331,7 +331,7 @@
 
             // 评论
             commentItems(orderId) {
-                window.location.href = "doComment.html?orderId=" + orderId;
+                window.location.href = "doComment.html?userId=" + this.userInfo.id + "&orderId=" + orderId;
             },
 
             // 确认收货
