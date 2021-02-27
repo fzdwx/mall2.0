@@ -181,6 +181,19 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         orderStatus.setOrderId(merchantOrderId);
         orderStatus.setOrderStatus(status);
 
+        if (status.equals(OrderStatusEnum.WAIT_DELIVER.type)) {
+            orderStatus.setPayTime(new Date());
+        }
+        if (status.equals(OrderStatusEnum.SUCCESS.type)) {
+            orderStatus.setSuccessTime(new Date());
+        }
+        if (status.equals(OrderStatusEnum.CLOSE.type)) {
+            orderStatus.setCloseTime(new Date());
+        }
+        if (status.equals(OrderStatusEnum.WAIT_RECEIVE.type)) {
+            orderStatus.setDeliverTime(new Date());
+        }
+
         orderStatusService.updateById(orderStatus);
     }
 
