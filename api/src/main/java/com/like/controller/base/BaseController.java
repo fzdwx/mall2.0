@@ -1,10 +1,11 @@
-package com.like.controller;
+package com.like.controller.base;
 
 import com.like.enums.YesOrNo;
 import com.like.pojo.Orders;
 import com.like.service.OrderService;
 import com.like.utils.HttpJSONResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -14,22 +15,27 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class BaseController {
+    /**
+     * 付款网址
+     */
+    public static final String paymentUrl =
+            "http://payment.t.mukewang.com/foodie-payment/payment/createMerchantOrder";
 
     public static final String FOODIE_SHOPCART_SESSION = "shopcart";
     /**
      * 默认分页大小
      */
     public static final Integer DEFAULT_PAGESIZE = 10;
-
     /**
-     * 付款网址
+     * 服务端口号
      */
-    public static final String paymentUrl = "http://payment.t.mukewang.com/foodie-payment/payment/createMerchantOrder";
+    @Value("${server.port}")
+    private String port;
     /**
-     * 支付成功后 -> 支付中心 -> 服務器後代后台(payReturnUrl)
+     * 支付成功后 -> 支付中心 -> 服務器回调后台(payReturnUrl)
      */
-    public static final String payReturnUrl = "http://qm8czj.natappfree.cc/orders/notifyMerchantOrderPaid/";
-
+    public final String payReturnUrl =
+            "http://8.131.57.243:" + port + "/orders/notifyMerchantOrderPaid/";
 
     @Autowired
     public OrderService orderService;
@@ -53,5 +59,4 @@ public class BaseController {
         }
         return HttpJSONResult.ok(order);
     }
-
 }

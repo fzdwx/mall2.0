@@ -1,6 +1,6 @@
 package com.like.controller.center;
 
-import com.like.controller.BaseController;
+import com.like.controller.base.BaseController;
 import com.like.pojo.Users;
 import com.like.pojo.bo.center.UserCenterBo;
 import com.like.resource.FileUpload;

@@ -2,7 +2,7 @@ package com.like.controller.center;
 
 import cn.hutool.http.HttpStatus;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.like.controller.BaseController;
+import com.like.controller.base.BaseController;
 import com.like.enums.OrderStatusEnum;
 import com.like.pojo.vo.MyOrdersVo;
 import com.like.pojo.vo.OrderStatusCountsVO;

@@ -1,6 +1,7 @@
 package com.like.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.like.controller.base.BaseController;
 import com.like.pojo.Items;
 import com.like.pojo.ItemsImg;
 import com.like.pojo.ItemsParam;
