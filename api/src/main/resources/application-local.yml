@@ -1,0 +1,29 @@
+##################################################
+#
+# web访问端口  约定8088
+#
+##################################################
+server:
+  port: 8088
+##################################################
+#
+# 配置数据源信息
+#
+##################################################
+spring:
+  datasource:
+    url: jdbc:mysql://8.131.57.243/mall2?characterEncoding=UTF-8&useSSL=false&useUnicode=true&serverTimezone=UTC
+    username: root
+    password: root
+##################################################
+#
+# mybatis 配置
+#
+##################################################
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+fileupload:
+  imageUserFaceLocation: D:\\Java\\project\\stduyproject\\mall2.0\\api\\src\\main\\resources\\static\\image\\userFace
+  imageServerUlrPrefix: http://localhost:8088/image/userFace/

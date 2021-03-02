@@ -4,6 +4,7 @@
 #
 ##################################################
 server:
+  port: 8088
   tomcat:
     uri-encoding: utf-8
   max-http-header-size: 80KB
@@ -13,13 +14,13 @@ server:
 #
 ##################################################
 spring:
-#################################################
-  profiles:
-    active: dev          #   云服务器测试环境
-  #    active: local        #    本地测试环境
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
+    #    url: jdbc:mysql://47.115.115.226:3306/mall2?characterEncoding=UTF-8&useSSL=false&useUnicode=true&serverTimezone=UTC
+    url: jdbc:mysql://8.131.57.243/mall2?characterEncoding=UTF-8&useSSL=false&useUnicode=true&serverTimezone=UTC
+    username: root
+    password: root
     hikari:
       connection-timeout: 30000                     # 连接超时时长
       minimum-idle: 5                               # 最小连接数
@@ -33,13 +34,23 @@ spring:
     multipart:
       max-request-size: 512000                      # 请求大小限制
       max-file-size: 512000                         # 文件上传大小限制
+
 ##################################################
 #
 # mybatis 配置
 #
 ##################################################
+#mapper:
+#  mappers: com.like.my.mapper.MyMapper
+#  not-empty: false                                  # 是否追加查询的字段是否为空
+#  identity: MYSQL
 mybatis-plus:
   type-aliases-package: com.like.pojo               # 所有实体类所在的包路径
   mapper-locations: classpath:mapper/*.xml          # mapper映射文件
   global-config:
     banner: false
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+pagehelper:
+  helper-dialect: mysql
+#  support-methods-arguments: true

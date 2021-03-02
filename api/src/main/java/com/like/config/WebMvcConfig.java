@@ -2,6 +2,7 @@ package com.like.config;
 
 import com.like.resource.FileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Autowired
     FileUpload fileUpload;
 
+    @Value("${spring.profiles.active}")
+    String proProfiles;
+
     /**
      * 实现静态资源的映射
      *
@@ -28,12 +32,17 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/**")
-                // 怎么访问：比如/image/userFace/1123.jpg
-                .addResourceLocations("file:" + "D:\\Java\\project\\stduyproject\\mall2.0\\api\\src\\main\\resources\\static\\image") // 映射本地文件
                 .addResourceLocations("classpath:/META-INF/resources/"); // 映射swagger
 
+        // 映射图片访问路径
+        if (proProfiles.equals("local")) {
+            registry.addResourceHandler("/**").addResourceLocations(
+                    "file:" + "D:\\Java\\project\\stduyproject\\mall2.0\\api\\src\\main\\resources\\static\\image");
+        } else if (proProfiles.equals("dev")) {
+            registry.addResourceHandler("/**")
+                    .addResourceLocations("file:" + "/root/app/mall2/image/userFace");
+        }
     }
-
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
