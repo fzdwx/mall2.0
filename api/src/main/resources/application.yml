@@ -15,8 +15,8 @@ server:
 spring:
 #################################################
   profiles:
-    active: dev          #   云服务器测试环境
-  #    active: local        #    本地测试环境
+#    active: dev          #   云服务器测试环境
+    active: local        #    本地测试环境
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
