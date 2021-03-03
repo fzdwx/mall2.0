@@ -81,10 +81,10 @@ public class IndexController extends BaseController {
         if (rootCatId == null) return HttpJSONResult.errorMsg("分类不存在");
         List<CategoryVo> dbDataList = null;
 
-        String redisCacheJson = redisUtil.get(REDIS_KEY_SUB_CAT);
+        String redisCacheJson = redisUtil.get(REDIS_KEY_SUB_CAT_PREFIX + ":" + rootCatId);
         if (StringUtils.isBlank(redisCacheJson)) {
             dbDataList = categoryService.getSubCatList(rootCatId);
-            redisUtil.set(REDIS_KEY_SUB_CAT, JsonUtils.objectToJson(dbDataList));
+            redisUtil.set(REDIS_KEY_SUB_CAT_PREFIX + ":" + rootCatId, JsonUtils.objectToJson(dbDataList));
         } else dbDataList = JsonUtils.jsonToList(redisCacheJson, CategoryVo.class);
 
         return HttpJSONResult.ok(dbDataList);
