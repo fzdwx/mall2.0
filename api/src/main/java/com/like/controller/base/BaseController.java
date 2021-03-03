@@ -26,8 +26,10 @@ public class BaseController {
     public static String REDIS_KEY_CAROUSEL = "carousel";
     /** 网站首页一级分类保存在redis中的key */
     public static String REDIS_KEY_CATS = "cats";
-    /** 网站首页一级分类的子分类保存在redis中的key REDIS_KEY_SUB_CAT_PREFIX+":"+rootCatId */
-    public static String REDIS_KEY_SUB_CAT_PREFIX;
+    /** 网站首页一级分类的子分类保存在redis中的key REDIS_KEY_SHOP_CART_PREFIX+rootCatId */
+    public static String REDIS_KEY_SHOP_CART_PREFIX = "shopCart:";
+    /** 用户购物车保存在redis中的key REDIS_KEY_SUB_CAT_PREFIX+rootCatId */
+    public static String REDIS_KEY_SUB_CAT_PREFIX = "subCat:";
     /** 服务端口号 */
     @Value("${server.port}")
     private String port;
