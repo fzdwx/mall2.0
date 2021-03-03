@@ -49,7 +49,7 @@ public class OrderController extends BaseController {
         CookieUtils.setCookie(request, response, FOODIE_SHOPCART_SESSION, "", true);
         // 3.向支付中心发送当前订单，用于保存支付中心的订单数据
         // 设置回调路径
-        order.getMerchant().setReturnUrl(payReturnUrl + orderId);
+        order.getMerchant().setReturnUrl(PAY_RETURN_URL + orderId);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -59,7 +59,7 @@ public class OrderController extends BaseController {
         order.getMerchant().setAmount(1);// TODO: 2021/2/21  测试
         // 发送请求到支付中心，创建订单
         ResponseEntity<HttpJSONResult> resp = restTemplate.postForEntity(
-                paymentUrl,
+                PAYMENT_URL,
                 new HttpEntity<MerchantOrdersVO>(order.getMerchant(), headers),
                 HttpJSONResult.class);
 

@@ -15,35 +15,30 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class BaseController {
-    /**
-     * 付款网址
-     */
-    public static final String paymentUrl =
-            "http://payment.t.mukewang.com/foodie-payment/payment/createMerchantOrder";
 
+    /** 付款网址 */
+    public static final String PAYMENT_URL = "http://payment.t.mukewang.com/foodie-payment/payment/createMerchantOrder";
+    /** 购物车保存session的名词 */
     public static final String FOODIE_SHOPCART_SESSION = "shopcart";
-    /**
-     * 默认分页大小
-     */
+    /** 默认分页大小 */
     public static final Integer DEFAULT_PAGESIZE = 10;
-    /**
-     * 服务端口号
-     */
+    /** 网站首页轮播图保存在redis中的key */
+    public static String REDIS_KEY_CAROUSEL = "carousel";
+    /** 网站首页一级分类保存在redis中的key */
+    public static String REDIS_KEY_CATS = "cats";
+    /** 网站首页一级分类的子分类保存在redis中的key */
+    public static String REDIS_KEY_SUB_CAT;
+    /** 服务端口号 */
     @Value("${server.port}")
     private String port;
-    /**
-     * 支付成功后 -> 支付中心 -> 服務器回调后台(payReturnUrl)
-     */
-    public final String payReturnUrl =
-            "http://8.131.57.243:" + port + "/orders/notifyMerchantOrderPaid/";
-
+    /** 支付成功后 -> 支付中心 -> 服務器回调后台(payReturnUrl) */
+    public final String PAY_RETURN_URL = "http://8.131.57.243:" + port + "/orders/notifyMerchantOrderPaid/";
     @Autowired
     public OrderService orderService;
 
     /**
      * 检查用户是否有对应的订单
-     *
-     * @param userId  用户id
+     * @param userId 用户id
      * @param orderId 订单id
      * @return {@link HttpJSONResult}
      */
