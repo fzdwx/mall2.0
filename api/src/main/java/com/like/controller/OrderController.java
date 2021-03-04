@@ -58,9 +58,11 @@ public class OrderController extends BaseController {
         // 1.创建订单
         OrderVO order = orderService.createOrder(submitOrder, shopCart);
         String orderId = order.getOrderId();
+
         // 2.创建订单后，移除购物车中已结算(已提交)的商品
-        // TODO: 2021/2/20 整合redis后，完善购物车中的已结算商品清除，并同步到前端的cookie
-        CookieUtils.setCookie(request, response, FOODIE_SHOPCART_SESSION, "", true);
+        redisUtil.delete((REDIS_KEY_SHOP_CART_PREFIX + submitOrder.getUserId())); // 后端 操作更新
+        CookieUtils.setCookie(request, response, FOODIE_SHOPCART_SESSION, "", true); // 前端操作更新
+
         // 3.向支付中心发送当前订单，用于保存支付中心的订单数据
         // 设置回调路径
         order.getMerchant().setReturnUrl(PAY_RETURN_URL + orderId);
