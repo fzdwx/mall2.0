@@ -22,4 +22,9 @@ public class ShopCartBO {
     private Integer buyCounts;
     private String priceDiscount;
     private String priceNormal;
+
+    public ShopCartBO(String specId, Integer buyCounts) {
+        this.specId = specId;
+        this.buyCounts = buyCounts;
+    }
 }

@@ -58,11 +58,6 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public OrderVO createOrder(SubmitOrderBO submitOrder, List<ShopCartBO> shopCart) {
-        // 0.根据购物车生成需要的map specId:buyCounts
-        Map<String, Integer> specIdMapBuyCounts =
-                shopCart.stream()
-                        .collect(Collectors.toMap(ShopCartBO::getSpecId, ShopCartBO::getBuyCounts));
-
         String orderId = sid.nextShort();
         String userId = submitOrder.getUserId();
         String addressId = submitOrder.getAddressId();
@@ -70,7 +65,11 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         Integer payMethod = submitOrder.getPayMethod();
         String leftMsg = submitOrder.getLeftMsg();
         Integer postAmount = 0; // 邮费
+        List<ShopCartBO> removeShopCart = new ArrayList<>();
 
+        // 0.根据购物车生成需要的map specId:buyCounts
+        Map<String, ShopCartBO> specIdMapShopCart = shopCart.stream()
+                                                            .collect(Collectors.toMap(ShopCartBO::getSpecId, e -> e));
         // 1.需要保存的订单信息
         UserAddress address = addressService.queryUserAddress(userId, addressId);
         Orders order = new Orders();
@@ -103,9 +102,11 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         specs.forEach(
                 spec -> {
                     // 整合redis后商品购买数量重新从redis中获取
-                    int buyCounts = specIdMapBuyCounts.get(spec.getId());
+                    int buyCounts = specIdMapShopCart.get(spec.getId()).getBuyCounts();
                     totalAmount.updateAndGet(v -> v + spec.getPriceNormal() * buyCounts);
                     realPayAmount.updateAndGet(v -> v + spec.getPriceDiscount() * buyCounts);
+                    // 需要从购物车中清除的数据
+                    removeShopCart.add(new ShopCartBO(spec.getId(), buyCounts));
                 });
         order.setTotalAmount(totalAmount.get());
         order.setRealPayAmount(realPayAmount.get());
@@ -139,7 +140,7 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
             subOrder.setItemSpecId(itemIdMapSpec.get(itemId).getId());
             subOrder.setItemSpecName(itemIdMapSpec.get(itemId).getName());
             subOrder.setPrice(realPayAmount.get());
-            subOrder.setBuyCounts(specIdMapBuyCounts.get(itemIdMapSpec.get(itemId).getId()));
+            subOrder.setBuyCounts(specIdMapShopCart.get(itemIdMapSpec.get(itemId).getId()).getBuyCounts());
 
             saveOrderItems.add(subOrder);
         }
@@ -164,7 +165,8 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
                 itemsSpecService.updateBatchById(itemIdMapSpec.values());*/
         itemIdMapSpec.forEach(
                 (itemId, spec) -> {
-                    itemsSpecService.decreaseItemSpecStock(spec.getId(), specIdMapBuyCounts.get(spec.getId()));
+                    itemsSpecService
+                            .decreaseItemSpecStock(spec.getId(), specIdMapShopCart.get(spec.getId()).getBuyCounts());
                 });
 
         // 5.构建商户订单 用于传给支付中心
@@ -175,7 +177,7 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         merchant.setPayMethod(payMethod);
 
         // 6.构建自定义订单vo
-        return new OrderVO(orderId, merchant);
+        return new OrderVO(orderId, merchant, removeShopCart);
     }
 
     @Override
