@@ -4,14 +4,18 @@ import com.like.controller.base.BaseController;
 import com.like.enums.OrderStatusEnum;
 import com.like.pojo.OrderStatus;
 import com.like.pojo.OrderVO;
+import com.like.pojo.bo.ShopCartBO;
 import com.like.pojo.bo.SubmitOrderBO;
 import com.like.pojo.vo.MerchantOrdersVO;
 import com.like.service.OrderService;
 import com.like.utils.CookieUtils;
 import com.like.utils.HttpJSONResult;
+import com.like.utils.JsonUtils;
+import com.like.utils.RedisUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 
 /**
@@ -36,13 +41,22 @@ public class OrderController extends BaseController {
     private OrderService orderService;
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private RedisUtil redisUtil;
 
     @PostMapping("create")
     @ApiOperation("创建订单")
-    public HttpJSONResult create(@RequestBody SubmitOrderBO submitOrder,
-                                 HttpServletRequest request, HttpServletResponse response) {
+    public HttpJSONResult create(
+            @RequestBody SubmitOrderBO submitOrder,
+            HttpServletRequest request, HttpServletResponse response) {
+        // 0.获取购物车信息
+        String shopCartRedisCache = redisUtil.get(REDIS_KEY_SHOP_CART_PREFIX + submitOrder.getUserId());
+        if (StringUtils.isBlank(shopCartRedisCache)) {
+            return HttpJSONResult.errorMsg("购物车信息不正确");
+        }
+        List<ShopCartBO> shopCart = JsonUtils.jsonToList(shopCartRedisCache, ShopCartBO.class);
         // 1.创建订单
-        OrderVO order = orderService.createOrder(submitOrder);
+        OrderVO order = orderService.createOrder(submitOrder, shopCart);
         String orderId = order.getOrderId();
         // 2.创建订单后，移除购物车中已结算(已提交)的商品
         // TODO: 2021/2/20 整合redis后，完善购物车中的已结算商品清除，并同步到前端的cookie

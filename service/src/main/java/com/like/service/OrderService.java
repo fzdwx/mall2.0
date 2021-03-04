@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.like.pojo.OrderStatus;
 import com.like.pojo.OrderVO;
 import com.like.pojo.Orders;
+import com.like.pojo.bo.ShopCartBO;
 import com.like.pojo.bo.SubmitOrderBO;
 import com.like.pojo.vo.MyOrdersVo;
 import com.like.pojo.vo.OrderStatusCountsVO;
@@ -28,11 +29,11 @@ public interface OrderService extends IService<Orders> {
 
     /**
      * 创建订单
-     *
      * @param submitOrder 提交订单的bo
-     * @return
+     * @param shopCart 商店购物车
+     * @return {@link OrderVO}
      */
-    OrderVO createOrder(SubmitOrderBO submitOrder);
+    OrderVO createOrder(SubmitOrderBO submitOrder, List<ShopCartBO> shopCart);
 
     /**
      * 更新订单状态

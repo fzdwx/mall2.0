@@ -8,6 +8,7 @@ import com.like.enums.OrderStatusEnum;
 import com.like.enums.YesOrNo;
 import com.like.mapper.OrdersMapper;
 import com.like.pojo.*;
+import com.like.pojo.bo.ShopCartBO;
 import com.like.pojo.bo.SubmitOrderBO;
 import com.like.pojo.vo.*;
 import com.like.service.*;
@@ -56,7 +57,12 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public OrderVO createOrder(SubmitOrderBO submitOrder) {
+    public OrderVO createOrder(SubmitOrderBO submitOrder, List<ShopCartBO> shopCart) {
+        // 0.根据购物车生成需要的map specId:buyCounts
+        Map<String, Integer> specIdMapBuyCounts =
+                shopCart.stream()
+                        .collect(Collectors.toMap(ShopCartBO::getSpecId, ShopCartBO::getBuyCounts));
+
         String orderId = sid.nextShort();
         String userId = submitOrder.getUserId();
         String addressId = submitOrder.getAddressId();
@@ -89,18 +95,17 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         order.setCreatedTime(new Date());
         order.setUpdatedTime(new Date());
 
-        // 购买数量
-        int buyCount = 1;
         AtomicReference<Integer> totalAmount = new AtomicReference<>(0);
         AtomicReference<Integer> realPayAmount = new AtomicReference<>(0);
         // 根据specIds获取价格
         String[] s = itemSpecIds.split(",");
         List<ItemsSpec> specs = itemService.queryItemSpecListBySpecIds(Arrays.asList(s));
         specs.forEach(
-                a -> {
-                    // TODO: 2021/2/19 整合redis后商品购买数量重新从redis中获取
-                    totalAmount.updateAndGet(v -> v + a.getPriceNormal() * buyCount);
-                    realPayAmount.updateAndGet(v -> v + a.getPriceDiscount() * buyCount);
+                spec -> {
+                    // 整合redis后商品购买数量重新从redis中获取
+                    int buyCounts = specIdMapBuyCounts.get(spec.getId());
+                    totalAmount.updateAndGet(v -> v + spec.getPriceNormal() * buyCounts);
+                    realPayAmount.updateAndGet(v -> v + spec.getPriceDiscount() * buyCounts);
                 });
         order.setTotalAmount(totalAmount.get());
         order.setRealPayAmount(realPayAmount.get());
@@ -112,12 +117,12 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
 
         Map<String, ItemsSpec> itemIdMapSpec =
                 specs.stream().collect(Collectors.toMap(ItemsSpec::getItemId, e -> e));
-        // a.根据specId获取itemId获取items
+        // 2.a.根据specId获取itemId获取items
         List<String> itemIds =
                 specs.stream().map(ItemsSpec::getItemId).collect(Collectors.toList());
         List<Items> items = itemService.queryItemList(itemIds);
 
-        // b.根据itemId获取对应的主图片路径
+        // 2.b.根据itemId获取对应的主图片路径
         Map<String, String> itemIdMapImgUrl = itemService.queryItemMainImgByIds(itemIds);
 
         for (Items item : items) {
@@ -134,11 +139,11 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
             subOrder.setItemSpecId(itemIdMapSpec.get(itemId).getId());
             subOrder.setItemSpecName(itemIdMapSpec.get(itemId).getName());
             subOrder.setPrice(realPayAmount.get());
-            subOrder.setBuyCounts(buyCount);
+            subOrder.setBuyCounts(specIdMapBuyCounts.get(itemIdMapSpec.get(itemId).getId()));
 
             saveOrderItems.add(subOrder);
         }
-        // c.保存子订单信息
+        // 2.c.保存子订单信息
         OrderItemsService.saveBatch(saveOrderItems);
 
         // 3.保存订单状态 - 等待付款
@@ -150,16 +155,16 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         orderStatusService.save(waitPayOrderStatus);
 
         // 4.扣除库存
-        //        itemIdMapSpec.forEach((itemId, spec) -> {
-        //            Integer stock = spec.getStock();
-        //            if (stock > buyCount) {
-        //                spec.setStock(stock - buyCount);
-        //            }
-        //        });
-        //        itemsSpecService.updateBatchById(itemIdMapSpec.values());
+        /*        itemIdMapSpec.forEach((itemId, spec) -> {
+                    Integer stock = spec.getStock();
+                    if (stock > buyCount) {
+                        spec.setStock(stock - buyCount);
+                    }
+                });
+                itemsSpecService.updateBatchById(itemIdMapSpec.values());*/
         itemIdMapSpec.forEach(
                 (itemId, spec) -> {
-                    itemsSpecService.decreaseItemSpecStock(spec.getId(), buyCount);
+                    itemsSpecService.decreaseItemSpecStock(spec.getId(), specIdMapBuyCounts.get(spec.getId()));
                 });
 
         // 5.构建商户订单 用于传给支付中心
@@ -170,8 +175,7 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         merchant.setPayMethod(payMethod);
 
         // 6.构建自定义订单vo
-        OrderVO ordervo = new OrderVO(orderId, merchant);
-        return ordervo;
+        return new OrderVO(orderId, merchant);
     }
 
     @Override
@@ -239,7 +243,7 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         // 2.根据订单状态分组
         Map<Integer, List<OrderStatusOverviewVO>> grpMap =
                 rawList.stream()
-                        .collect(Collectors.groupingBy(OrderStatusOverviewVO::getOrderStatus));
+                       .collect(Collectors.groupingBy(OrderStatusOverviewVO::getOrderStatus));
         // 3.统计对应的个数
         OrderStatusCountsVO res = new OrderStatusCountsVO();
         grpMap.forEach(
@@ -252,12 +256,12 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
                         res.setWaitCommentCounts(
                                 (int)
                                         list.stream()
-                                                .filter(
-                                                        o ->
-                                                                Objects.equals(
-                                                                        o.getIsComment(),
-                                                                        YesOrNo.NO.code))
-                                                .count());
+                                            .filter(
+                                                    o ->
+                                                            Objects.equals(
+                                                                    o.getIsComment(),
+                                                                    YesOrNo.NO.code))
+                                            .count());
                     } else if (Objects.equals(status, OrderStatusEnum.WAIT_RECEIVE.type)) {
                         res.setWaitReceiveCounts(list.size());
                     }
