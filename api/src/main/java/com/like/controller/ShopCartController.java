@@ -15,9 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -78,15 +75,24 @@ public class ShopCartController extends BaseController {
     @PostMapping("/del")
     @ApiOperation(value = "从购物车中删除商品")
     public HttpJSONResult del(
-            @RequestParam String userId, @RequestParam String itemSpecId,
-            HttpServletRequest request,
-            HttpServletResponse response) {
+            @RequestParam String userId,
+            @RequestParam String itemSpecId) {
         if (StringUtils.isBlank(userId) || StringUtils.isBlank(itemSpecId))
             return HttpJSONResult.errorMsg("请求参数不完整");
         log.info("用户id:{}-删除商品规格id:{}", userId, itemSpecId);
-        // TODO: 2021/2/16 如果用户已经登录，则需要同步删除后端购物车中的商品
-
-        HttpSession session = request.getSession();
+        //   如果用户已经登录，则需要同步删除后端购物车中的商品
+        List<ShopCartBO> shopCartList = null;
+        String shopCartRedisCache = redisUtil.get(REDIS_KEY_SHOP_CART_PREFIX + userId);
+        if (StringUtils.isNoneBlank(shopCartRedisCache)) {
+            shopCartList = JsonUtils.jsonToList(shopCartRedisCache, ShopCartBO.class).stream().map(shopCart -> {
+                if (shopCart.getSpecId().equals(itemSpecId)) {
+                    return null;   // 存在就删除
+                }
+                return shopCart;
+            }).collect(Collectors.toList());
+            // 覆盖原购物车
+            redisUtil.set(REDIS_KEY_SHOP_CART_PREFIX + userId, JsonUtils.objectToJson(shopCartList));
+        }
         return HttpJSONResult.ok();
     }
 
