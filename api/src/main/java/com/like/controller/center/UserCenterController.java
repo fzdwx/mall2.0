@@ -3,6 +3,7 @@ package com.like.controller.center;
 import com.like.controller.base.BaseController;
 import com.like.pojo.Users;
 import com.like.pojo.bo.center.UserCenterBo;
+import com.like.pojo.vo.UsersVO;
 import com.like.resource.FileUpload;
 import com.like.service.UsersService;
 import com.like.utils.CookieUtils;
@@ -102,12 +103,11 @@ public class UserCenterController extends BaseController {
                     log.info("用户新头像访问地址：{}", path);
                     // 更新用户头像
                     Users dbUser = usersService.updateUserFace(userId, path);
+                    UsersVO conventUsers = conventUsersVO(dbUser);
 
-                    // 保护用户隐私信息
-                    setNullProperty(dbUser);
                     CookieUtils.setCookie(req, reps,
-                            "user",
-                            JsonUtils.objectToJson(dbUser), true);
+                                          COOKIE_FOODIE_USER_INFO_KEY,
+                                          JsonUtils.objectToJson(conventUsers), true);
                 }
                 return HttpJSONResult.ok();
             } catch (IOException e) {
@@ -147,13 +147,13 @@ public class UserCenterController extends BaseController {
         }
 
         Users resUser = usersService.updateUseUserCenterBO(userId, user);
-        // 保护用户隐私信息
-        setNullProperty(resUser);
+        // 后续会更改，增加token，整合到redis，分布式会话
+        UsersVO conventUsers = conventUsersVO(resUser);
         CookieUtils.setCookie(req, reps,
-                "user",
-                JsonUtils.objectToJson(resUser), true);
-        // TODO: 2021/2/24 后续会更改，增加token，整合到redis，分布式会话
-        return HttpJSONResult.ok();
+                              COOKIE_FOODIE_USER_INFO_KEY,
+                              JsonUtils.objectToJson(conventUsers), true);
+
+        return HttpJSONResult.ok(conventUsers);
     }
 
     /**
