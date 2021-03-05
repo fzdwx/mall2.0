@@ -10,7 +10,6 @@ import com.like.service.OrderService;
 import com.like.utils.CookieUtils;
 import com.like.utils.HttpJSONResult;
 import com.like.utils.JsonUtils;
-import com.like.utils.RedisUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -43,8 +42,6 @@ public class OrderController extends BaseController {
     private OrderService orderService;
     @Autowired
     private RestTemplate restTemplate;
-    @Autowired
-    private RedisUtil redisUtil;
 
     @PostMapping("create")
     @ApiOperation("创建订单")

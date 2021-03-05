@@ -10,7 +10,6 @@ import com.like.utils.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +19,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -35,8 +33,6 @@ public class PassportController extends BaseController {
 
     @Autowired
     private UsersService usersService;
-    @Autowired
-    private RedisUtil redisUtil;
 
     @GetMapping("/usernameIsExist")
     @ApiOperation(value = "判断用户名是否存在")
@@ -81,20 +77,6 @@ public class PassportController extends BaseController {
                               JsonUtils.objectToJson(conventUsers), true);
         syncShopCart(req, reps, createUser.getId());
         return HttpJSONResult.ok(conventUsers);
-    }
-
-    /**
-     * 生成返回页面的用户信息,并将当前用户的token保存 到redis中
-     * @param createUser 创建用户
-     * @return {@link UsersVO}
-     */
-    private UsersVO conventUsersVO(Users createUser) {
-        String uniqueToken = UUID.randomUUID().toString().trim();
-        UsersVO toWebUser = new UsersVO();
-        BeanUtils.copyProperties(createUser, toWebUser);
-        toWebUser.setUserUniqueToken(uniqueToken);
-        redisUtil.set(REDIS_USER_TOKEN_PREFIX + toWebUser.getId(), toWebUser.getUserUniqueToken());
-        return toWebUser;
     }
 
     @PostMapping("/login")

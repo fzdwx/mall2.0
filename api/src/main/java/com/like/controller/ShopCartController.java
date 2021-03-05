@@ -7,7 +7,6 @@ import com.like.pojo.vo.ShopCartVO;
 import com.like.service.ItemService;
 import com.like.utils.HttpJSONResult;
 import com.like.utils.JsonUtils;
-import com.like.utils.RedisUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -34,8 +33,6 @@ public class ShopCartController extends BaseController {
 
     @Autowired
     private ItemService itemService;
-    @Autowired
-    private RedisUtil redisUtil;
 
     @PostMapping("/add")
     @ApiOperation(value = "添加商品到购物车")

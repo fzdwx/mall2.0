@@ -10,7 +10,6 @@ import com.like.service.CarouselService;
 import com.like.service.CategoryService;
 import com.like.utils.HttpJSONResult;
 import com.like.utils.JsonUtils;
-import com.like.utils.RedisUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
@@ -36,8 +35,6 @@ public class IndexController extends BaseController {
     private CarouselService carouselService;
     @Autowired
     private CategoryService categoryService;
-    @Autowired
-    private RedisUtil redisUtil;
 
     @GetMapping("carousel")
     @ApiOperation(value = "获取首页轮播图列表")

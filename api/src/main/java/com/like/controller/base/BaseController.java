@@ -2,11 +2,17 @@ package com.like.controller.base;
 
 import com.like.enums.YesOrNo;
 import com.like.pojo.Orders;
+import com.like.pojo.Users;
+import com.like.pojo.vo.UsersVO;
 import com.like.service.OrderService;
 import com.like.utils.HttpJSONResult;
+import com.like.utils.RedisUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.UUID;
 
 /**
  * @author like
@@ -48,6 +54,8 @@ public class BaseController {
     /*************************   PAGE  *************************/
     @Autowired
     public OrderService orderService;
+    @Autowired
+    public RedisUtil redisUtil;
 
     /**
      * 检查用户是否有对应的订单
@@ -66,5 +74,19 @@ public class BaseController {
             return HttpJSONResult.errorMsg("该订单不存在");
         }
         return HttpJSONResult.ok(order);
+    }
+
+    /**
+     * 生成返回页面的用户信息,并将当前用户的token保存 到redis中
+     * @param createUser 创建用户
+     * @return {@link UsersVO}
+     */
+    public UsersVO conventUsersVO(Users createUser) {
+        String uniqueToken = UUID.randomUUID().toString().trim();
+        UsersVO toWebUser = new UsersVO();
+        BeanUtils.copyProperties(createUser, toWebUser);
+        toWebUser.setUserUniqueToken(uniqueToken);
+        redisUtil.set(REDIS_USER_TOKEN_PREFIX + toWebUser.getId(), toWebUser.getUserUniqueToken());
+        return toWebUser;
     }
 }
