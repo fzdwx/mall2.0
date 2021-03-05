@@ -1,6 +1,8 @@
 package com.like.controller;
 
+import com.like.controller.base.BaseController;
 import com.like.pojo.Users;
+import com.like.pojo.bo.ShopCartBO;
 import com.like.pojo.bo.UserBo;
 import com.like.service.UsersService;
 import com.like.utils.*;
@@ -12,6 +14,11 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Collection;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author like
@@ -21,10 +28,12 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 @RequestMapping("passport")
 @Api(value = "用户登录注册相关接口", tags = {"用户登录注册相关接口"})
-public class PassportController {
+public class PassportController extends BaseController {
 
     @Autowired
     private UsersService usersService;
+    @Autowired
+    private RedisUtil redisUtil;
 
     @GetMapping("/usernameIsExist")
     @ApiOperation(value = "判断用户名是否存在")
@@ -36,8 +45,9 @@ public class PassportController {
 
     @PostMapping("/regist")
     @ApiOperation(value = "用户注册")
-    public HttpJSONResult regist(@RequestBody UserBo user, HttpServletRequest req,
-                                 HttpServletResponse reps) {
+    public HttpJSONResult regist(
+            @RequestBody UserBo user, HttpServletRequest req,
+            HttpServletResponse reps) {
         String username = user.getUsername();
         String password = user.getPassword();
         String confirmPassword = user.getConfirmPassword();
@@ -64,16 +74,17 @@ public class PassportController {
         setNullProperty(u);
 
         CookieUtils.setCookie(req, reps,
-                "user",
-                JsonUtils.objectToJson(u), true);
+                              COOKIE_FOODIE_USER_INFO_KEY,
+                              JsonUtils.objectToJson(u), true);
         return HttpJSONResult.ok();
     }
 
     @PostMapping("/login")
     @ApiOperation(value = "用户登录")
-    public HttpJSONResult login(@RequestBody UserBo user,
-                                HttpServletRequest req,
-                                HttpServletResponse reps) throws Exception {
+    public HttpJSONResult login(
+            @RequestBody UserBo user,
+            HttpServletRequest req,
+            HttpServletResponse reps) throws Exception {
         String username = user.getUsername();
         String password = user.getPassword();
 
@@ -89,24 +100,65 @@ public class PassportController {
         setNullProperty(u);
 
         CookieUtils.setCookie(req, reps,
-                "user",
-                JsonUtils.objectToJson(u), true);
+                              COOKIE_FOODIE_USER_INFO_KEY,
+                              JsonUtils.objectToJson(u), true);
 
         // TODO: 2021/2/16 生成用户token 存入redis会话
-        // TODO: 2021/2/16 同步购物车数据
+        // 同步购物车数据 cookie 和 redis 中保存的购物车信息
+        syncShopCart(req, reps, u.getId());
         return HttpJSONResult.ok(u);
+    }
+
+    /**
+     * 用户注册成功后，同步cookie中的购物车到redis中
+     * @param req http请求
+     * @param userId 用户id
+     */
+    private void syncShopCart(
+            HttpServletRequest req, HttpServletResponse resp,
+            String userId) throws UnsupportedEncodingException {
+        // 0.获取cookie以及redis中的购物车信息
+        String cookieShopCart = CookieUtils.getCookieValue(req, COOKIE_FOODIE_SHOPCART_KEY);
+        String redisShopCart = redisUtil.get(REDIS_KEY_SHOP_CART_PREFIX + userId);
+
+        // 1.根据各种情况处理
+        if (StringUtils.isBlank(redisShopCart)) {
+            if (StringUtils.isNotBlank(cookieShopCart)) {           // redis中为空且cookie不为空就让cookie覆盖
+                cookieShopCart = URLDecoder.decode(cookieShopCart, "utf-8");  // 要解码，不然全是乱码  写在这为了减少一次判断
+                redisUtil.set(REDIS_KEY_SHOP_CART_PREFIX + userId, cookieShopCart);
+            } // 都为空就不操作
+        } else if (StringUtils.isNotBlank(redisShopCart)) {
+            if (StringUtils.isBlank(cookieShopCart)) {  // redis不为空且cookie为空，给cookie中存入redis中保存的购物车
+                CookieUtils.setCookie(req, resp, COOKIE_FOODIE_SHOPCART_KEY, redisShopCart, true);
+            } else {        // 都不为空，以cookie为主
+                Map<String, ShopCartBO> cookie = JsonUtils.jsonToList(cookieShopCart, ShopCartBO.class).stream()
+                                                          .collect(Collectors.toMap(ShopCartBO::getSpecId, e -> e));
+                Map<String, ShopCartBO> redis = JsonUtils.jsonToList(redisShopCart, ShopCartBO.class).stream()
+                                                         .collect(Collectors.toMap(ShopCartBO::getSpecId, e -> e));
+                cookie.forEach((specId, shopCart) -> {
+                    if (redis.get(specId) != null) {
+                        redis.remove(specId);
+                    }
+                });
+                Collection<ShopCartBO> shopCart = cookie.values();
+                shopCart.addAll(redis.values());
+
+                redisUtil.set(REDIS_KEY_SHOP_CART_PREFIX + userId, JsonUtils.objectToJson(shopCart));
+            }
+        }
     }
 
     @PostMapping("/logout")
     @ApiOperation(value = "用户退出登录")
-    public HttpJSONResult logout(@RequestParam String userId,
-                                 HttpServletRequest req,
-                                 HttpServletResponse reps) throws Exception {
+    public HttpJSONResult logout(
+            @RequestParam String userId,
+            HttpServletRequest req,
+            HttpServletResponse reps) throws Exception {
 
         // 清除用户对应的cookie
         CookieUtils.deleteCookie(req, reps, "user");
 
-        // TODO: 2021/2/9 用户登录清除购物车 
+        // TODO: 2021/2/9 用户登录清除购物车
         // TODO: 2021/2/9 在分布式session中要清除数据
         return HttpJSONResult.ok();
     }

@@ -18,8 +18,10 @@ public class BaseController {
 
     /** 付款网址 */
     public static final String PAYMENT_URL = "http://payment.t.mukewang.com/foodie-payment/payment/createMerchantOrder";
-    /** 购物车保存session的名词 */
-    public static final String FOODIE_SHOPCART_SESSION = "shopcart";
+    /** 购物车保存cookie的名词 */
+    public static final String COOKIE_FOODIE_SHOPCART_KEY = "shopcart";
+    /** 用户保存在cookie中的key */
+    public static final String COOKIE_FOODIE_USER_INFO_KEY = "user";
     /** 默认分页大小 */
     public static final Integer DEFAULT_PAGESIZE = 10;
     /** 网站首页轮播图保存在redis中的key */

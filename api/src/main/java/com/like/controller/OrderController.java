@@ -63,7 +63,7 @@ public class OrderController extends BaseController {
 
         // 2.创建订单后，移除购物车中已结算(已提交)的商品
         String newCartJson = refreshShopCart(submitOrder.getUserId(), shopCart, order.getRemoveShopCart());
-        CookieUtils.setCookie(request, response, FOODIE_SHOPCART_SESSION, newCartJson, true); // 前端操作更新
+        CookieUtils.setCookie(request, response, COOKIE_FOODIE_SHOPCART_KEY, newCartJson, true); // 前端操作更新
 
         // 3.向支付中心发送当前订单，用于保存支付中心的订单数据
         // 设置回调路径
