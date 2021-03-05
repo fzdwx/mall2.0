@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -130,17 +130,16 @@ public class PassportController extends BaseController {
         } else if (StringUtils.isNotBlank(redisShopCart)) {
             if (StringUtils.isBlank(cookieShopCart)) {  // redis不为空且cookie为空，给cookie中存入redis中保存的购物车
                 CookieUtils.setCookie(req, resp, COOKIE_FOODIE_SHOPCART_KEY, redisShopCart, true);
-            } else {        // 都不为空，以cookie为主
-                Map<String, ShopCartBO> cookie = JsonUtils.jsonToList(cookieShopCart, ShopCartBO.class).stream()
-                                                          .collect(Collectors.toMap(ShopCartBO::getSpecId, e -> e));
+            } else {        // 都不为空，如果cookie和redis中都存在该购物信息，以cookie中的购物数为准
+                List<ShopCartBO> shopCart = JsonUtils.jsonToList(cookieShopCart, ShopCartBO.class);
                 Map<String, ShopCartBO> redis = JsonUtils.jsonToList(redisShopCart, ShopCartBO.class).stream()
                                                          .collect(Collectors.toMap(ShopCartBO::getSpecId, e -> e));
-                cookie.forEach((specId, shopCart) -> {
+                for (ShopCartBO s : shopCart) {    // 存在就覆盖购买数量
+                    String specId = s.getSpecId();
                     if (redis.get(specId) != null) {
                         redis.remove(specId);
                     }
-                });
-                Collection<ShopCartBO> shopCart = cookie.values();
+                }
                 shopCart.addAll(redis.values());
 
                 redisUtil.set(REDIS_KEY_SHOP_CART_PREFIX + userId, JsonUtils.objectToJson(shopCart));
