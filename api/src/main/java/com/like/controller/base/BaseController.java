@@ -15,28 +15,37 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class BaseController {
-
     /** 付款网址 */
     public static final String PAYMENT_URL = "http://payment.t.mukewang.com/foodie-payment/payment/createMerchantOrder";
+    /** 默认分页大小 */
+    public static final Integer DEFAULT_PAGESIZE = 10;
+
+    /*************************   COOKIE  *************************/
     /** 购物车保存cookie的名词 */
     public static final String COOKIE_FOODIE_SHOPCART_KEY = "shopcart";
     /** 用户保存在cookie中的key */
     public static final String COOKIE_FOODIE_USER_INFO_KEY = "user";
-    /** 默认分页大小 */
-    public static final Integer DEFAULT_PAGESIZE = 10;
+
+    /*************************   REDIS  *************************/
     /** 网站首页轮播图保存在redis中的key */
     public static String REDIS_KEY_CAROUSEL = "carousel";
-    /** 网站首页一级分类保存在redis中的key */
+    /** 一级分配前缀 */
     public static String REDIS_KEY_CATS = "cats";
-    /** 网站首页一级分类的子分类保存在redis中的key REDIS_KEY_SHOP_CART_PREFIX+rootCatId */
+    /** 用户商城前缀 REDIS_KEY_SHOP_CART_PREFIX+rootCatId */
     public static String REDIS_KEY_SHOP_CART_PREFIX = "shopCart:";
-    /** 用户购物车保存在redis中的key REDIS_KEY_SUB_CAT_PREFIX+rootCatId */
+    /** 子分类前缀   REDIS_KEY_SUB_CAT_PREFIX+rootCatId */
     public static String REDIS_KEY_SUB_CAT_PREFIX = "subCat:";
+    /** 用户token前缀 */
+    public static String REDIS_USER_TOKEN_PREFIX = "userToken:";
+
+    /*************************   PAY   *************************/
     /** 服务端口号 */
     @Value("${server.port}")
     private String port;
     /** 支付成功后 -> 支付中心 -> 服務器回调后台(payReturnUrl) */
     public final String PAY_RETURN_URL = "http://8.131.57.243:" + port + "/orders/notifyMerchantOrderPaid/";
+
+    /*************************   PAGE  *************************/
     @Autowired
     public OrderService orderService;
 

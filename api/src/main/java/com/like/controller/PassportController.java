@@ -4,11 +4,13 @@ import com.like.controller.base.BaseController;
 import com.like.pojo.Users;
 import com.like.pojo.bo.ShopCartBO;
 import com.like.pojo.bo.UserBo;
+import com.like.pojo.vo.UsersVO;
 import com.like.service.UsersService;
 import com.like.utils.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -47,7 +50,7 @@ public class PassportController extends BaseController {
     @ApiOperation(value = "用户注册")
     public HttpJSONResult regist(
             @RequestBody UserBo user, HttpServletRequest req,
-            HttpServletResponse reps) {
+            HttpServletResponse reps) throws UnsupportedEncodingException {
         String username = user.getUsername();
         String password = user.getPassword();
         String confirmPassword = user.getConfirmPassword();
@@ -66,17 +69,32 @@ public class PassportController extends BaseController {
         }
 
         // 4. 注册
-        Users u = usersService.createUser(user);
+        Users createUser = usersService.createUser(user);
 
-        if (u == null) return HttpJSONResult.errorMsg("用户数据保存失败，请稍后再试");
+        if (createUser == null) return HttpJSONResult.errorMsg("用户数据保存失败，请稍后再试");
+        // 5.实现用户redis会话 随机生成一个token保存到redis中
+        UsersVO conventUsers = conventUsersVO(createUser);
 
-        // 1.保护用户隐私信息
-        setNullProperty(u);
-
+        // 6.保存用户信息到cookie
         CookieUtils.setCookie(req, reps,
                               COOKIE_FOODIE_USER_INFO_KEY,
-                              JsonUtils.objectToJson(u), true);
-        return HttpJSONResult.ok();
+                              JsonUtils.objectToJson(conventUsers), true);
+        syncShopCart(req, reps, createUser.getId());
+        return HttpJSONResult.ok(conventUsers);
+    }
+
+    /**
+     * 生成返回页面的用户信息,并将当前用户的token保存 到redis中
+     * @param createUser 创建用户
+     * @return {@link UsersVO}
+     */
+    private UsersVO conventUsersVO(Users createUser) {
+        String uniqueToken = UUID.randomUUID().toString().trim();
+        UsersVO toWebUser = new UsersVO();
+        BeanUtils.copyProperties(createUser, toWebUser);
+        toWebUser.setUserUniqueToken(uniqueToken);
+        redisUtil.set(REDIS_USER_TOKEN_PREFIX + toWebUser.getId(), toWebUser.getUserUniqueToken());
+        return toWebUser;
     }
 
     @PostMapping("/login")
@@ -92,21 +110,20 @@ public class PassportController extends BaseController {
         if (StringUtils.isBlank(username) ||
                 StringUtils.isBlank(password)) return HttpJSONResult.errorMsg("用户名和密码不能为空");
 
-        Users u = usersService.queryUserForLogin(username, MD5Utils.getMD5Str(password));
+        Users createUser = usersService.queryUserForLogin(username, MD5Utils.getMD5Str(password));
 
-        if (u == null) return HttpJSONResult.errorMsg("用户名或密码不正确,请检查后在试");
+        if (createUser == null) return HttpJSONResult.errorMsg("用户名或密码不正确,请检查后在试");
 
-        // 1.保护用户隐私信息
-        setNullProperty(u);
+        // 1.生成用户token 存入redis会话
+        UsersVO conventUsers = conventUsersVO(createUser);
 
+        // 2.同步购物车数据 cookie 和 redis 中保存的购物车信息
+        syncShopCart(req, reps, createUser.getId());
+        // 3.同步到前端
         CookieUtils.setCookie(req, reps,
                               COOKIE_FOODIE_USER_INFO_KEY,
-                              JsonUtils.objectToJson(u), true);
-
-        // TODO: 2021/2/16 生成用户token 存入redis会话
-        // 同步购物车数据 cookie 和 redis 中保存的购物车信息
-        syncShopCart(req, reps, u.getId());
-        return HttpJSONResult.ok(u);
+                              JsonUtils.objectToJson(conventUsers), true);
+        return HttpJSONResult.ok(conventUsers);
     }
 
     /**
@@ -155,10 +172,11 @@ public class PassportController extends BaseController {
             HttpServletResponse reps) throws Exception {
 
         // 清除用户对应的cookie
-        CookieUtils.deleteCookie(req, reps, "user");
-
-        // TODO: 2021/2/9 用户登录清除购物车
-        // TODO: 2021/2/9 在分布式session中要清除数据
+        CookieUtils.deleteCookie(req, reps, COOKIE_FOODIE_USER_INFO_KEY);
+        // 用户退出登录清除user token
+        redisUtil.delete(REDIS_USER_TOKEN_PREFIX + userId);
+        //  在分布式session中要清除数据
+        CookieUtils.deleteCookie(req, reps, COOKIE_FOODIE_SHOPCART_KEY);
         return HttpJSONResult.ok();
     }
 
