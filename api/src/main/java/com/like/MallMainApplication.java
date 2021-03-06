@@ -2,6 +2,7 @@ package com.like;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 
 /**
@@ -9,7 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
  * @email 980650920@qq.com
  * @since 2021-02-05 17:02
  */
-@SpringBootApplication
+@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 @ComponentScan(basePackages = {"com.like", "org.n3r"})
 public class MallMainApplication {
     public static void main(String[] args) {
