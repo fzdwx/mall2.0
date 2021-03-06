@@ -14,9 +14,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author like
@@ -28,6 +30,11 @@ public class SSOController {
 
     /** 用户token前缀 */
     public static String REDIS_USER_TOKEN_PREFIX = "userToken:";
+    /** 用户全局门票 userTicket:ticket,userId */
+    public static String REDIS_USER_TICKET_PREFIX = "userTicket:";
+    /** 临时门票 */
+    public static String REDIS_USER_TEMP_TICKET_PREFIX = "userTempTicket:";
+    public static String COOKIE_USER_TICKET = "cookieUserTicket:";
     @Autowired
     private RedisUtil redisUtil;
     @Autowired
@@ -46,6 +53,13 @@ public class SSOController {
         return "login";
     }
 
+    /**
+     * CAS的统一接口
+     * 目的：
+     * 1.登录后创建用户的全局会话                    -> uniqueToken
+     * 2.创建用户全局门票，表示在cas端是否登录         ->  userTicket
+     * 3.创建用户的临时票据，用于回跳回传              ->   tempTicket
+     */
     @PostMapping("doLogin")
     public String doLogin(
             String username, String password, String returnUrl, Model model,
@@ -62,12 +76,37 @@ public class SSOController {
             model.addAttribute("errmsg", "用户名或密码不正确,请检查后在试");
             return "login";
         }
-        // 2.实现用户的redis会话
-        String uniqueToken = UUID.randomUUID().toString().trim();
+        // 2.实现用户的redis会话 uniqueToken
+        String uniqueToken = UUID.randomUUID().toString().trim();   // 创建用户的全局会话
         UsersVO toWebUser = new UsersVO();
         BeanUtils.copyProperties(dbUser, toWebUser);
         toWebUser.setUserUniqueToken(uniqueToken);
         redisUtil.set(REDIS_USER_TOKEN_PREFIX + toWebUser.getId(), JsonUtils.objectToJson(toWebUser));
-        return "login";
+
+        // 3.生成ticket门票，全局门票，代表用户在CAS登录过
+        String userTicket = UUID.randomUUID().toString().trim();
+        setCookie("userTicket", userTicket, response);
+        // 4.全局门票和用户id关联
+        redisUtil.set(REDIS_USER_TICKET_PREFIX + userTicket, toWebUser.getId());
+        // 5.生成临时票据，回跳到调用端网站，由cas端临时签发的ticket
+        String tempTicket = createTempTicket();
+        return "redirect:" + returnUrl + "?tempTicke=t" + tempTicket;
+    }
+
+    private void setCookie(String key, String value, HttpServletResponse response) {
+        Cookie cookie = new Cookie(key, value);
+        cookie.setDomain("sso.com");
+        cookie.setPath("/");
+        response.addCookie(cookie);
+    }
+
+    private String createTempTicket() {
+        String res = UUID.randomUUID().toString().trim();
+        try {
+            redisUtil.setEx(REDIS_USER_TEMP_TICKET_PREFIX + res, MD5Utils.getMD5Str(res), 600, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
     }
 }
