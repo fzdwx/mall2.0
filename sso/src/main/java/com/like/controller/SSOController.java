@@ -27,11 +27,11 @@ import java.util.concurrent.TimeUnit;
 @Controller
 public class SSOController {
 
-    /** 用户token前缀 */
+    /** 用户token前缀 userToken:userId */
     public static String REDIS_USER_TOKEN_PREFIX = "userToken:";
     /** 用户全局门票 userTicket:ticket,userId */
     public static String REDIS_USER_TICKET_PREFIX = "userTicket:";
-    /** 临时门票 */
+    /** 临时门票 userTempTicket:tempTicket*/
     public static String REDIS_USER_TEMP_TICKET_PREFIX = "userTempTicket:";
     /** 用户保存在cookie中的key */
     public static final String COOKIE_FOODIE_USER_INFO_KEY = "user";
@@ -50,8 +50,28 @@ public class SSOController {
             HttpServletRequest request, HttpServletResponse response) {
         model.addAttribute("returnUrl", returnUrl);
 
-        // TODO: 2021/3/6 后续完善校验是否登录
+        // 后续完善校验是否登录
+        String userTicket = CookieUtils.getCookieValue(request, COOKIE_USER_TICKET, true);
+        if (verifyUserTicket(userTicket)) {
+            String tempTicket = createTempTicket();
+            return "redirect:" + returnUrl + "?tempTicket=" + tempTicket;
+        }
         return "login";
+    }
+
+    private boolean verifyUserTicket(String userTicket) {
+        if (StringUtils.isBlank(userTicket)) {
+            return false;
+        }
+        String userId = redisUtil.get(REDIS_USER_TICKET_PREFIX + userTicket);
+        if (StringUtils.isBlank(userId)) {
+            return false;
+        }
+        String userInfo = redisUtil.get(REDIS_USER_TOKEN_PREFIX + userId);
+        if (StringUtils.isBlank(userInfo)) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -112,6 +132,9 @@ public class SSOController {
         }
         // 2.获取cookie的用户全局门票 验证并获取用户信息
         String userTicket = CookieUtils.getCookieValue(request, COOKIE_USER_TICKET, true);
+        if (StringUtils.isBlank(userTicket)) {
+            return HttpJSONResult.errorUserTicket("用户全局门票异常");
+        }
         String userId = redisUtil.get(REDIS_USER_TICKET_PREFIX + userTicket);
         String redisUserJson = redisUtil.get(REDIS_USER_TOKEN_PREFIX + userId);
 

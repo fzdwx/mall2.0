@@ -41,12 +41,13 @@
             var userIsLogin = this.userIsLogin;
             if (!userIsLogin) {
                 // 如果没有登录，判断一下是否存在tmpTicket临时票据
-                var tmpTicket = app.getUrlParam("tmpTicket");
-                console.log("tmpTicket: " + tmpTicket);
-                if (tmpTicket != null && tmpTicket != "" && tmpTicket != undefined) {
+                var tempTicket = app.getUrlParam("tempTicket");
+                console.log("tempTicket: " + tempTicket);
+                if (tempTicket != null && tempTicket != "" && tempTicket != undefined) {
                     // 如果有tmpTicket临时票据，就携带临时票据发起请求到cas验证获取用户会话
                     axios.defaults.withCredentials = true;
-                    axios.post('http://www.sso.com:8090/verifyTmpTicket?tmpTicket=' + tmpTicket)
+                    // axios.post('http://www.sso.com:8090/verifyTmpTicket?tempTicket=' + tempTicket)
+                    axios.post('http://localhost:8090/verifyTmpTicket?tempTicket=' + tempTicket)
                         .then(res => {
                             if (res.data.status == 200) {
                                 var userInfo = res.data.data;
@@ -54,7 +55,8 @@
                                 this.userInfo = userInfo;
                                 this.userIsLogin = true;
                                 app.setCookie("user", JSON.stringify(userInfo));
-                                window.location.href = "http://www.music.com:8080/sso-music/index.html";
+                                // window.location.href = "http://www.music.com:8080/sso-music/index.html";
+                                window.location.href = "http://localhost:8080/sso-music/index.html";
                             } else {
                                 alert(res.data.msg);
                                 console.log(res.data.msg);
@@ -62,7 +64,7 @@
                         });
                 } else {
                     // 如果没有tmpTicket临时票据，说明用户从没登录过，那么就可以跳转至cas做统一登录认证了
-                    window.location.href = app.SSOServerUrl + "/login?returnUrl=http://www.music.com:8080/sso-music/index.html";
+                    window.location.href = app.SSOServerUrl + "/login?returnUrl=http://localhost:8080/sso-music/index.html";
                 }
 
                 console.log(app.SSOServerUrl + "/login?returnUrl=" + window.location);
