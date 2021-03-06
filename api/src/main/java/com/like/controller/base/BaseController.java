@@ -84,13 +84,13 @@ public class BaseController {
 
     /**
      * 生成返回页面的用户信息,并将当前用户的token保存 到redis中
-     * @param createUser 创建用户
+     * @param user 用户
      * @return {@link UsersVO}
      */
-    public UsersVO conventUsersVO(Users createUser) {
+    public UsersVO conventUsersVO(Users user) {
         String uniqueToken = UUID.randomUUID().toString().trim();
         UsersVO toWebUser = new UsersVO();
-        BeanUtils.copyProperties(createUser, toWebUser);
+        BeanUtils.copyProperties(user, toWebUser);
         toWebUser.setUserUniqueToken(uniqueToken);
         redisUtil.set(REDIS_USER_TOKEN_PREFIX + toWebUser.getId(), toWebUser.getUserUniqueToken());
         return toWebUser;

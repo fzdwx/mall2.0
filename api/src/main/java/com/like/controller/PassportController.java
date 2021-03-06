@@ -92,15 +92,15 @@ public class PassportController extends BaseController {
         if (StringUtils.isBlank(username) ||
                 StringUtils.isBlank(password)) return HttpJSONResult.errorMsg("用户名和密码不能为空");
 
-        Users createUser = usersService.queryUserForLogin(username, MD5Utils.getMD5Str(password));
+        Users dbUser = usersService.queryUserForLogin(username, MD5Utils.getMD5Str(password));
 
-        if (createUser == null) return HttpJSONResult.errorMsg("用户名或密码不正确,请检查后在试");
+        if (dbUser == null) return HttpJSONResult.errorMsg("用户名或密码不正确,请检查后在试");
 
         // 1.生成用户token 存入redis会话
-        UsersVO conventUsers = conventUsersVO(createUser);
+        UsersVO conventUsers = conventUsersVO(dbUser);
 
         // 2.同步购物车数据 cookie 和 redis 中保存的购物车信息
-        syncShopCart(req, reps, createUser.getId());
+        syncShopCart(req, reps, dbUser.getId());
         // 3.同步到前端
         CookieUtils.setCookie(req, reps,
                               COOKIE_FOODIE_USER_INFO_KEY,
