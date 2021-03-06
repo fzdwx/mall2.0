@@ -44,6 +44,16 @@ spring:
   ##################################################
   session:
     store-type: redis                               # session存储类型
+  ##################################################
+  #
+  # 配置模板引擎：thymeleaf
+  #
+  ##################################################
+  thymeleaf:
+    mode: HTML
+    encoding: utf-8
+    prefix: classpath:templates/
+    suffix: .html
 ##################################################
 #
 # mybatis 配置
