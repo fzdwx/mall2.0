@@ -1,5 +1,6 @@
 package com.like.config;
 
+import com.like.interceptor.UserTokenInterceptor;
 import com.like.resource.FileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -7,6 +8,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -25,8 +27,24 @@ public class WebMvcConfig implements WebMvcConfigurer {
     String proProfiles;
 
     /**
+     * 添加拦截器
+     * @param registry 注册表
+     */
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(userTokenInterceptor()) // 添加拦截检测用户token的拦截器
+                .addPathPatterns("/myorders/**")
+                .addPathPatterns("/address/**")
+                .addPathPatterns("/myComment/**")
+                .addPathPatterns("/userInfo/**")
+                .addPathPatterns("/orders/**")
+                .excludePathPatterns("/orders/notifyMerchantOrderPaid/**")
+                .excludePathPatterns("/myorders/deliver/**");
+        WebMvcConfigurer.super.addInterceptors(registry);
+    }
+
+    /**
      * 实现静态资源的映射
-     *
      * @param registry 注册表
      */
     @Override
@@ -51,5 +69,14 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         return builder.build();
+    }
+
+    /**
+     * 用户令牌拦截器
+     * @return {@link UserTokenInterceptor}
+     */
+    @Bean
+    public UserTokenInterceptor userTokenInterceptor() {
+        return new UserTokenInterceptor();
     }
 }

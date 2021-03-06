@@ -26,6 +26,12 @@ public class BaseController {
     /** 默认分页大小 */
     public static final Integer DEFAULT_PAGESIZE = 10;
 
+    /*************************   HEADERS  *************************/
+    /** header中的用户令牌的key */
+    public static final String HEADER_USER_TOKEN_KEY = "headerUserToken";
+    /** header的用户id key */
+    public static final String HEADER_USER_ID_KEY = "headerUserId";
+
     /*************************   COOKIE  *************************/
     /** 购物车保存cookie的名词 */
     public static final String COOKIE_FOODIE_SHOPCART_KEY = "shopcart";
