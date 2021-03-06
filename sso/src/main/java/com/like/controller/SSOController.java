@@ -3,9 +3,7 @@ package com.like.controller;
 import com.like.pojo.Users;
 import com.like.pojo.vo.UsersVO;
 import com.like.service.UsersService;
-import com.like.utils.JsonUtils;
-import com.like.utils.MD5Utils;
-import com.like.utils.RedisUtil;
+import com.like.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
@@ -34,7 +33,9 @@ public class SSOController {
     public static String REDIS_USER_TICKET_PREFIX = "userTicket:";
     /** 临时门票 */
     public static String REDIS_USER_TEMP_TICKET_PREFIX = "userTempTicket:";
-    public static String COOKIE_USER_TICKET = "cookieUserTicket:";
+    /** 用户保存在cookie中的key */
+    public static final String COOKIE_FOODIE_USER_INFO_KEY = "user";
+    public static String COOKIE_USER_TICKET = "cookieUserTicket";
     @Autowired
     private RedisUtil redisUtil;
     @Autowired
@@ -85,19 +86,39 @@ public class SSOController {
 
         // 3.生成ticket门票，全局门票，代表用户在CAS登录过
         String userTicket = UUID.randomUUID().toString().trim();
-        setCookie("userTicket", userTicket, response);
+        CookieUtils.setCookie(request, response, COOKIE_USER_TICKET, userTicket, true);
         // 4.全局门票和用户id关联
         redisUtil.set(REDIS_USER_TICKET_PREFIX + userTicket, toWebUser.getId());
         // 5.生成临时票据，回跳到调用端网站，由cas端临时签发的ticket
         String tempTicket = createTempTicket();
-        return "redirect:" + returnUrl + "?tempTicke=t" + tempTicket;
+
+        return "redirect:" + returnUrl + "?tempTicket=" + tempTicket;
     }
 
-    private void setCookie(String key, String value, HttpServletResponse response) {
-        Cookie cookie = new Cookie(key, value);
-        cookie.setDomain("sso.com");
-        cookie.setPath("/");
-        response.addCookie(cookie);
+    @PostMapping("/verifyTmpTicket")
+    @ResponseBody
+    public HttpJSONResult verifyTmpTicket(
+            @RequestParam String tempTicket,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // 1.获取保存在redis中的用户临时门票 验证
+        String ticket = redisUtil.get(REDIS_USER_TEMP_TICKET_PREFIX + tempTicket);
+        if (StringUtils.isBlank(ticket)) {
+            return HttpJSONResult.errorUserTicket("用户临时门票不存在");
+        }
+        if (!ticket.equals(MD5Utils.getMD5Str(tempTicket))) {
+            return HttpJSONResult.errorUserTicket("用户临时门票异常");
+        } else {
+            redisUtil.delete(REDIS_USER_TEMP_TICKET_PREFIX + tempTicket);
+        }
+        // 2.获取cookie的用户全局门票 验证并获取用户信息
+        String userTicket = CookieUtils.getCookieValue(request, COOKIE_USER_TICKET, true);
+        String userId = redisUtil.get(REDIS_USER_TICKET_PREFIX + userTicket);
+        String redisUserJson = redisUtil.get(REDIS_USER_TOKEN_PREFIX + userId);
+
+        if (StringUtils.isNotBlank(redisUserJson)) {
+            CookieUtils.setCookie(request, response, COOKIE_FOODIE_USER_INFO_KEY, redisUserJson, true);
+        }
+        return HttpJSONResult.ok(JsonUtils.jsonToPojo(redisUserJson, UsersVO.class));
     }
 
     private String createTempTicket() {

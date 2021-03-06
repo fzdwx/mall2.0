@@ -15,6 +15,7 @@ import lombok.ToString;
  * #            502：拦截器验证用户token错误
  * #            555：异常抛出信息
  * #            556：用户qq校验异常
+ * 557：用户是否在cas登录
  * #####
  * @since 2021-02-07 12:31
  */
@@ -61,6 +62,8 @@ public class HttpJSONResult<V> {
     public static HttpJSONResult errorMsg(String msg) {
         return new HttpJSONResult(500, msg, null);
     }
+
+    public static HttpJSONResult errorUserTicket(String msg) { return new HttpJSONResult(557, msg, null); }
 
     public static HttpJSONResult errorMap(Object data) {
         return new HttpJSONResult(501, "error", data);
