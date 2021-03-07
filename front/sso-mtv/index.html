@@ -74,7 +74,8 @@
             logout() {
                 var userId = this.userInfo.id;
                 axios.defaults.withCredentials = true;
-                axios.post('http://www.sso.com:8090/logout?userId=' + userId)
+                // axios.post('http://www.sso.com:8090/logout?userId=' + userId)
+                axios.post('http://localhost:8090/logout?userId=' + userId)
                     .then(res => {
                         if (res.data.status == 200) {
                             var userInfo = res.data.data;
