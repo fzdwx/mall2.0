@@ -50,12 +50,13 @@ public class SSOController {
             HttpServletRequest request, HttpServletResponse response) {
         model.addAttribute("returnUrl", returnUrl);
 
-        // 后续完善校验是否登录
+        // 第二次登陆
         String userTicket = CookieUtils.getCookieValue(request, COOKIE_USER_TICKET, true);
         if (verifyUserTicket(userTicket)) {
             String tempTicket = createTempTicket();
             return "redirect:" + returnUrl + "?tempTicket=" + tempTicket;
         }
+        // 第一次登陆
         return "login";
     }
 
@@ -75,7 +76,7 @@ public class SSOController {
     }
 
     /**
-     * CAS的统一接口
+     * CAS的统一接口 第一次登陆
      * 目的：
      * 1.登录后创建用户的全局会话                    -> uniqueToken
      * 2.创建用户全局门票，表示在cas端是否登录         ->  userTicket
