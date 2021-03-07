@@ -1,2 +1,7 @@
 # mall2.0
-Java
+
+## 常用系统端口
+
+localhost:8080 // api接口
+
+localhost:8090 // sso接口

@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
  * @author like
  * @email 980650920@qq.com
  * @since 2021-03-06 15:02
+ * CAS登录接口
  */
 @Controller
 public class SSOController {
