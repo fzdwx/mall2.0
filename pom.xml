@@ -19,12 +19,12 @@
         <!--
            api -> service -> mapper -> pojo -> common
         -->
-        <module>common</module>
-        <module>pojo</module>
-        <module>mapper</module>
-        <module>service</module>
-        <module>api</module>
-        <module>sso</module>
+        <module>mall-dev-base-common</module>
+        <module>mall-dev-base-pojo</module>
+        <module>mall-dev-base-mapper</module>
+        <module>mall-dev-base-service</module>
+        <module>mall-dev-base-api</module>
+        <module>mall-server-sso</module>
     </modules>
 
 
