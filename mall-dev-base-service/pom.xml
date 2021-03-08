@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>com.like.mall2</groupId>
-            <artifactId>mapper</artifactId>
+            <artifactId>mall-server-base-mapper</artifactId>
             <version>0.1</version>
         </dependency>
     </dependencies>

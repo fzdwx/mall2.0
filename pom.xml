@@ -25,23 +25,11 @@
         <module>mall-dev-base-service</module>
         <module>mall-dev-base-api</module>
         <module>mall-server-sso</module>
+        <module>mall-server-search</module>
     </modules>
 
 
     <dependencies>
-        <!--    redis以及spring session    -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.session</groupId>
-            <artifactId>spring-session-data-redis</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
         <!--    lombok    -->
         <dependency>
             <groupId>org.projectlombok</groupId>
