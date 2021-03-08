@@ -1,4 +1,4 @@
-package com.like;
+package com.like.sso;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;

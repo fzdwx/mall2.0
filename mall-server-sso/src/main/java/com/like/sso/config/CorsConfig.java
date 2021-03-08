@@ -1,4 +1,4 @@
-package com.like.config;
+package com.like.sso.config;
 
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;

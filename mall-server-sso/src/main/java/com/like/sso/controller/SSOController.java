@@ -1,4 +1,4 @@
-package com.like.controller;
+package com.like.sso.controller;
 
 import com.like.pojo.Users;
 import com.like.pojo.vo.UsersVO;
