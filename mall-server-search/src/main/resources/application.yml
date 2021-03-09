@@ -4,3 +4,4 @@ server:
 es:
   host: 8.131.57.243
   port: 9200
+indices.fielddata.cache.size: 5%
