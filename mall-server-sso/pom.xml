@@ -12,6 +12,11 @@
     <artifactId>mall-server-sso</artifactId>
     <dependencies>
         <dependency>
+            <groupId>com.like.mall2</groupId>
+            <artifactId>mall-server-base-pojo</artifactId>
+            <version>0.1</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
