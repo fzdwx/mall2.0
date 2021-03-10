@@ -26,8 +26,8 @@
         <module>mall-server-api</module>
         <module>mall-server-sso</module>
         <module>mall-server-search</module>
-        <module>mall-server-rabbit-producer</module>
-        <module>mall-server-rabbit-consumer</module>
+        <module>mall-server-rabbit-parent</module>
+        <module>mall-server-task</module>
     </modules>
 
 

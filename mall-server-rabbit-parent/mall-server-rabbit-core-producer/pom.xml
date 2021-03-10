@@ -3,21 +3,15 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>parent</artifactId>
+        <artifactId>mall-server-rabbit-parent</artifactId>
         <groupId>com.like.mall2</groupId>
         <version>0.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>mall-server-rabbit-producer</artifactId>
+    <artifactId>mall-server-rabbit-core-producer</artifactId>
 
-    <dependencies>
-        <!-- 消息队列-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-amqp</artifactId>
-        </dependency>
-    </dependencies>
+
     <repositories>
         <repository>
             <id>aliyun</id>
