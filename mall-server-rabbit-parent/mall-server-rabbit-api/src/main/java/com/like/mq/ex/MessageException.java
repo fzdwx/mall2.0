@@ -1,4 +1,4 @@
-package com.like.pojo.mq.ex;
+package com.like.mq.ex;
 
 /**
  * @author like

@@ -1,6 +1,7 @@
-package com.like.pojo.mq;
+package com.like.mq.base;
 
-import com.like.pojo.mq.ex.MessageRunTimeException;
+
+import com.like.mq.ex.MessageRunTimeException;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
