@@ -1,5 +1,6 @@
 package com.like.mq.producer.autoconfigure;
 
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -9,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
  * @deprecated rabbitMQ 自动装配类
  */
 @Configuration
+@ComponentScan({"com.like.mq.producer"})
 public class RabbitProducerAutoConfigure {
 
 }
