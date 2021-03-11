@@ -5,6 +5,10 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
 import com.like.mq.base.Message;
 import com.like.mq.base.MessageType;
+import com.like.mq.common.serializer.SerializerFactory;
+import com.like.mq.common.serializer.converter.GenericMessageConverter;
+import com.like.mq.common.serializer.converter.RabbitMessageConverter;
+import com.like.mq.common.serializer.impl.JacksonSerializerMessageFactory;
 import com.like.mq.ex.MessageRunTimeException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -30,11 +34,16 @@ import java.util.Map;
 @Slf4j
 public class RabbitTemplateContainer implements RabbitTemplate.ConfirmCallback {
 
+    /** mq连接工厂 */
     @Autowired
     private ConnectionFactory connectionFactory;
+
     /** mq容器 */
     private Map<String /* TOPIC */, RabbitTemplate> mqContainer = Maps.newConcurrentMap();
+
     private Splitter splitter = Splitter.on("#");
+
+    private SerializerFactory serializerFactory = JacksonSerializerMessageFactory.instance;
 
     public RabbitTemplate get(Message message) throws MessageRunTimeException {
         Preconditions.checkNotNull(message);
@@ -54,8 +63,9 @@ public class RabbitTemplateContainer implements RabbitTemplate.ConfirmCallback {
         newTemplate.setExchange(topic);                               // 设置交换机
         newTemplate.setRetryTemplate(new RetryTemplate());           // 设置重试模板
         newTemplate.setRoutingKey(routingKey);                      // 设置路由键
-        // TODO: 2021/3/11 对message的序列化
-        //newTemplate.setMessageConverter();
+        // 对message的序列化
+        newTemplate.setMessageConverter(
+                new RabbitMessageConverter(new GenericMessageConverter(serializerFactory.create())));
         if (!MessageType.RAPID.equalsIgnoreCase(messageType)) {
             newTemplate.setConfirmCallback(this);         // 设置确认回调
             //newTemplate.setChannelTransacted(true);      // 事务
