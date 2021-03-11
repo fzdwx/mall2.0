@@ -4,9 +4,9 @@ import com.like.mq.base.Message;
 import com.like.mq.base.MessageType;
 import com.like.mq.producer.broker.RabbitBroker;
 import com.like.mq.producer.pool.AsyncBasePool;
+import com.like.mq.producer.pool.RabbitTemplateContainer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,8 +20,9 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class RabbitBrokerImpl implements RabbitBroker {
 
+    /** rabbitTemplate 容器 */
     @Autowired
-    private RabbitTemplate rabbitTemplate;
+    private RabbitTemplateContainer rabbitContainer;
 
     @Override
     public void rapidSend(Message message) {
@@ -54,9 +55,7 @@ public class RabbitBrokerImpl implements RabbitBroker {
             String topic = message.getTopic();
             CorrelationData correlationData = new CorrelationData(
                     String.format("%s#%s", message.getMessageId(), System.currentTimeMillis()));
-
-            rabbitTemplate.convertAndSend(topic, routingKey, message, correlationData);
-
+            rabbitContainer.get(message).convertAndSend(topic, routingKey, message, correlationData);
             log.info("#RabbitBrokerImpl.doSendMessage# send to mq,messageId:{}", message.getMessageId());
         });
 
