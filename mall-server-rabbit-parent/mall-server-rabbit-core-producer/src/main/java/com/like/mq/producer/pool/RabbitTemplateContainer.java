@@ -66,9 +66,9 @@ public class RabbitTemplateContainer implements RabbitTemplate.ConfirmCallback {
         // 对message的序列化
         newTemplate.setMessageConverter(
                 new RabbitMessageConverter(new GenericMessageConverter(serializerFactory.create())));
-        if (!MessageType.RAPID.equalsIgnoreCase(messageType)) {
+        if (!MessageType.RAPID.equalsIgnoreCase(messageType)) {  // 除 MessageType.RAPID 外全部都 要调用确认回调
             newTemplate.setConfirmCallback(this);         // 设置确认回调
-            //newTemplate.setChannelTransacted(true);      // 事务
+            //newTemplate.setChannelTransacted(true);    // 事务
         }
         mqContainer.putIfAbsent(topic, newTemplate);
 
@@ -77,7 +77,7 @@ public class RabbitTemplateContainer implements RabbitTemplate.ConfirmCallback {
 
     /**
      * 确认
-     * TODO: 2021/3/11 具体的消息应答 除迅速消息 MessageType.RAPID
+     * 具体的消息应答 除迅速消息 MessageType.RAPID
      * @param correlationData 关联数据
      * @param ack 消
      * @param cause 导致

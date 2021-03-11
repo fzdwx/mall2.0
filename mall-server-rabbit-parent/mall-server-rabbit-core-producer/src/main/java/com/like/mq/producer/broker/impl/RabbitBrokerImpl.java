@@ -32,7 +32,9 @@ public class RabbitBrokerImpl implements RabbitBroker {
 
     @Override
     public void confirmSend(Message message) {
-
+        message.setMessageType(MessageType.CONFIRM);
+        // 在获取rabbitMq template的时候 会根据 MessageType.CONFIRM 添加确认回调方法
+        doSendMessage(message);
     }
 
     @Override
@@ -53,8 +55,10 @@ public class RabbitBrokerImpl implements RabbitBroker {
         AsyncBasePool.submit(() -> {
             String routingKey = message.getRoutingKey();
             String topic = message.getTopic();
-            CorrelationData correlationData = new CorrelationData(
-                    String.format("%s#%s", message.getMessageId(), System.currentTimeMillis()));
+            CorrelationData correlationData =
+                    new CorrelationData(String.format("%s#%s",
+                                                      message.getMessageId(),
+                                                      System.currentTimeMillis()));
             rabbitContainer.get(message).convertAndSend(topic, routingKey, message, correlationData);
             log.info("#RabbitBrokerImpl.doSendMessage# send to mq,messageId:{}", message.getMessageId());
         });
