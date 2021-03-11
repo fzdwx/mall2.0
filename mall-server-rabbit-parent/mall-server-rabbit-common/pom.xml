@@ -11,6 +11,13 @@
 
     <artifactId>mall-server-rabbit-common</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.like.mall2</groupId>
+            <artifactId>mall-server-rabbit-api</artifactId>
+            <version>0.1</version>
+        </dependency>
+    </dependencies>
     <repositories>
         <repository>
             <id>aliyun</id>

@@ -11,7 +11,17 @@
 
     <artifactId>mall-server-rabbit-core-producer</artifactId>
 
-
+    <dependencies>
+        <dependency>
+            <groupId>com.like.mall2</groupId>
+            <artifactId>mall-server-rabbit-common</artifactId>
+            <version>0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+    </dependencies>
     <repositories>
         <repository>
             <id>aliyun</id>
