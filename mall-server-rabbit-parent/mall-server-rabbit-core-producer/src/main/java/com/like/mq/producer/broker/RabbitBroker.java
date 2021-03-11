@@ -5,8 +5,8 @@ import com.like.mq.base.Message;
 /**
  * @author like
  * @email 980650920@qq.com
+ * @Description 具体发送不同类型消息的接口
  * @since 2021-03-11 16:25
- * @deprecated 具体发送不同类型消息的接口
  */
 public interface RabbitBroker {
 

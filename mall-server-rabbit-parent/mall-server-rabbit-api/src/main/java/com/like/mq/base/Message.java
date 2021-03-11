@@ -13,8 +13,8 @@ import java.util.UUID;
 /**
  * @author like
  * @email 980650920@qq.com
+ * @Description 自定义的mq的消息类
  * @since 2021-03-10 19:17
- * @deprecated 自定义的mq的消息类
  */
 @Data
 public class Message implements Serializable {

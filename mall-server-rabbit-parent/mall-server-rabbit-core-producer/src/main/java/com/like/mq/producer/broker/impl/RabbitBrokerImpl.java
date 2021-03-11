@@ -2,8 +2,8 @@ package com.like.mq.producer.broker.impl;
 
 import com.like.mq.base.Message;
 import com.like.mq.base.MessageType;
-import com.like.mq.producer.broker.AsyncBaseQueue;
 import com.like.mq.producer.broker.RabbitBroker;
+import com.like.mq.producer.pool.AsyncBasePool;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component;
 /**
  * @author like
  * @email 980650920@qq.com
+ * @Description 真正实现发消息功能的类
  * @since 2021-03-11 16:28
- * @deprecated 真正实现发消息功能的类
  */
 @Component
 @Slf4j
@@ -49,7 +49,7 @@ public class RabbitBrokerImpl implements RabbitBroker {
      * @param message 消息
      */
     private void doSendMessage(Message message) {
-        AsyncBaseQueue.submit(() -> {
+        AsyncBasePool.submit(() -> {
             String routingKey = message.getRoutingKey();
             String topic = message.getTopic();
             CorrelationData correlationData = new CorrelationData(

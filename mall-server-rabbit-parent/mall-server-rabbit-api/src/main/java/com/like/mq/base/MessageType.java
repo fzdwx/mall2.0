@@ -3,8 +3,8 @@ package com.like.mq.base;
 /**
  * @author like
  * @email 980650920@qq.com
+ * @Description mq里面的消息类型
  * @since 2021-03-10 19:24
- * @deprecated mq里面的消息类型
  */
 public final class MessageType {
 

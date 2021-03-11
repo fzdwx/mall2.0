@@ -3,8 +3,8 @@ package com.like.mq.ex;
 /**
  * @author like
  * @email 980650920@qq.com
+ * @Description mq消息异常
  * @since 2021-03-10 20:10
- * @deprecated mq消息异常
  */
 public class MessageException extends Exception {
 

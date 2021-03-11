@@ -8,8 +8,8 @@ import java.util.List;
 /**
  * @author like
  * @email 980650920@qq.com
+ * @Description 消息生产者
  * @since 2021-03-11 16:01
- * @deprecated 消息生产者
  */
 public interface MessageProducer {
 
