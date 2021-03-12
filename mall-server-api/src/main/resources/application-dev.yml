@@ -16,7 +16,7 @@ spring:
     database: 1
     port: 6379
   datasource:
-    url: jdbc:mysql://8.131.57.243/mall2?characterEncoding=UTF-8&useSSL=false&useUnicode=true&serverTimezone=UTC
+    url: jdbc:mysql://8.131.57.243:3306/mall2?characterEncoding=UTF-8&useSSL=false&useUnicode=true&serverTimezone=UTC
     username: root
     password: root
 ##################################################

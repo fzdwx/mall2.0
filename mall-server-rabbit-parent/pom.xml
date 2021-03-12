@@ -16,6 +16,13 @@
         <module>mall-server-rabbit-common</module>
         <module>mall-server-rabbit-core-producer</module>
     </modules>
+    <dependencies>
+        <dependency>
+            <groupId>com.like.mall2</groupId>
+            <artifactId>mall-server-base-mapper</artifactId>
+            <version>0.1</version>
+        </dependency>
+    </dependencies>
 
     <!--    <modules>-->
     <!--        <module>mall-server-rabbit-common</module>-->
