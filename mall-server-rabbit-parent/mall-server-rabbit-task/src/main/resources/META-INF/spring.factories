@@ -1,0 +1,2 @@
+# auto configure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.like.task.autoconfigure.JobParseAutoConfiguration

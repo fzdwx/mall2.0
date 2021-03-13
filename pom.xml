@@ -27,7 +27,7 @@
         <module>mall-server-sso</module>
         <module>mall-server-search</module>
         <module>mall-server-rabbit-parent</module>
-        <module>mall-server-task</module>
+        <module>es-job</module>
     </modules>
 
 

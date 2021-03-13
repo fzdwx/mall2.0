@@ -15,13 +15,14 @@
         <module>mall-server-rabbit-api</module>
         <module>mall-server-rabbit-common</module>
         <module>mall-server-rabbit-core-producer</module>
+        <module>mall-server-rabbit-task</module>
     </modules>
     <dependencies>
-        <dependency>
-            <groupId>com.like.mall2</groupId>
-            <artifactId>mall-server-base-mapper</artifactId>
-            <version>0.1</version>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>com.like.mall2</groupId>-->
+        <!--            <artifactId>mall-server-base-mapper</artifactId>-->
+        <!--            <version>0.1</version>-->
+        <!--        </dependency>-->
     </dependencies>
 
     <!--    <modules>-->

@@ -3,12 +3,19 @@ package com.like.mq.producer.broker.impl;
 import com.like.mq.base.Message;
 import com.like.mq.base.MessageType;
 import com.like.mq.producer.broker.RabbitBroker;
+import com.like.mq.producer.constant.BrokerMessageConst;
+import com.like.mq.producer.constant.BrokerMessageStatus;
+import com.like.mq.producer.pojo.BrokerMessage;
 import com.like.mq.producer.pool.AsyncBasePool;
 import com.like.mq.producer.pool.RabbitTemplateContainer;
+import com.like.mq.producer.service.MessageStoreService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Date;
 
 /**
  * @author like
@@ -23,6 +30,10 @@ public class RabbitBrokerImpl implements RabbitBroker {
     /** rabbitTemplate 容器 */
     @Autowired
     private RabbitTemplateContainer rabbitContainer;
+
+    /** 信息存储服务 */
+    @Autowired
+    private MessageStoreService messageStoreService;
 
     @Override
     public void rapidSend(Message message) {
@@ -39,7 +50,21 @@ public class RabbitBrokerImpl implements RabbitBroker {
 
     @Override
     public void reliabilitySend(Message message) {
+        // 1.记录发送消息的日志
+        Date now = new Date();
+        BrokerMessage brokerMessage = new BrokerMessage();
+        brokerMessage.setMessageId(message.getMessageId());
+        brokerMessage.setStatus(BrokerMessageStatus.SENDING);
+        brokerMessage.setMessage(message);
+        brokerMessage.setNextRetry(DateUtils.addMinutes(now, BrokerMessageConst.TIME_OUT));
+        brokerMessage.setCreateTime(now);
+        brokerMessage.setUpdateTime(now);
+        // TryCount 在第一次发的时候不用设置
+        //brokerMessage.setTryCount(0);
+        messageStoreService.insert(brokerMessage);
 
+        // 2.执行发送消息的逻辑
+        doSendMessage(message);
     }
 
     @Override
@@ -56,9 +81,10 @@ public class RabbitBrokerImpl implements RabbitBroker {
             String routingKey = message.getRoutingKey();
             String topic = message.getTopic();
             CorrelationData correlationData =
-                    new CorrelationData(String.format("%s#%s",
-                                                      message.getMessageId(),
-                                                      System.currentTimeMillis()));
+                    new CorrelationData(
+                            String.format("%s#%s",
+                                          message.getMessageId(),
+                                          System.currentTimeMillis()));
             rabbitContainer.get(message).convertAndSend(topic, routingKey, message, correlationData);
             log.info("#RabbitBrokerImpl.doSendMessage# send to mq,messageId:{}", message.getMessageId());
         });

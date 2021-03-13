@@ -10,6 +10,7 @@ import com.like.mq.common.serializer.converter.GenericMessageConverter;
 import com.like.mq.common.serializer.converter.RabbitMessageConverter;
 import com.like.mq.common.serializer.impl.JacksonSerializerMessageFactory;
 import com.like.mq.ex.MessageRunTimeException;
+import com.like.mq.producer.service.MessageStoreService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
@@ -75,6 +76,9 @@ public class RabbitTemplateContainer implements RabbitTemplate.ConfirmCallback {
         return mqContainer.get(topic);
     }
 
+    @Autowired
+    private MessageStoreService messageStoreService;
+
     /**
      * 确认
      * 具体的消息应答 除迅速消息 MessageType.RAPID
@@ -90,6 +94,8 @@ public class RabbitTemplateContainer implements RabbitTemplate.ConfirmCallback {
         long sendTime = Long.parseLong(strings.get(1));
 
         if (ack) {
+            // ack 成功 更新日志表的状态为send ok
+            messageStoreService.success(messageId);
             log.info("send message ack is OK,confirm messageId:{},sendTime:{}", messageId, sendTime);
         } else {
             log.error("send message ack is Fail,confirm messageId:{},sendTime:{}", messageId, sendTime);

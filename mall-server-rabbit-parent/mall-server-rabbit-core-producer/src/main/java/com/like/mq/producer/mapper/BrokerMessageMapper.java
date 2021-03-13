@@ -3,7 +3,7 @@ package com.like.mq.producer.mapper;
 
 import com.like.mq.producer.pojo.BrokerMessage;
 import io.lettuce.core.dynamic.annotation.Param;
-import org.mapstruct.Mapper;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.Date;
 import java.util.List;

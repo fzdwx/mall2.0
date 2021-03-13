@@ -92,7 +92,7 @@
         </choose>
     </select>
 
-    <select id="queryItemsBySpecId" parameterType="list" resultType="shopCartVO">
+    <select id="queryItemsBySpecId" parameterType="list" resultType="ShopCartVO">
         select
         i.id itemId,
         ii.url itemImgUrl,
