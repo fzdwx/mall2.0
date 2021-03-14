@@ -20,7 +20,7 @@ public @interface ElasticJobConfig {
 
     String cron() default "";
 
-    String jobTypeName();
+    String jobTypeName() default "";
 
     int shardingTotalCount() default 0;
 

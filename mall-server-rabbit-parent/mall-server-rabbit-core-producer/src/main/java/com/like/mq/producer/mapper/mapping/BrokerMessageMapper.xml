@@ -4,7 +4,7 @@
     <resultMap id="BaseResultMap" type="com.like.mq.producer.mapper.BrokerMessageMapper">
         <id column="message_id" property="messageId" jdbcType="VARCHAR"/>
         <result column="message" property="message" jdbcType="VARCHAR"
-                typeHandler="com.bfxy.rabbit.common.mybatis.handler.MessageJsonTypeHandler"/>
+                typeHandler="com.like.mq.common.mabatis.MessageJsonTypeHandler"/>
         <result column="try_count" property="tryCount" jdbcType="INTEGER"/>
         <result column="status" property="status" jdbcType="VARCHAR"/>
         <result column="next_retry" property="nextRetry" jdbcType="TIMESTAMP"/>
@@ -151,6 +151,7 @@
             bm.update_time = #{updateTime,jdbcType=TIMESTAMP}
         where bm.message_id = #{brokerMessageId,jdbcType=VARCHAR}
     </update>
+    <update id="updateByPrimaryKeyWithBLOBs"></update>
 
 
 </mapper>

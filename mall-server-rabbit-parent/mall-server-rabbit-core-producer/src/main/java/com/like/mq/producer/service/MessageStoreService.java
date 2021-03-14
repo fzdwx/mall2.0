@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author like
@@ -44,5 +45,22 @@ public class MessageStoreService {
      */
     public void failure(String messageId) {
         brokerMessageMapper.changeBrokerMessageStatus(messageId, BrokerMessageStatus.SEND_FAIL, new Date());
+    }
+
+    /**
+     * 获取超时的消息message
+     * @param status 状态
+     * @return {@link List<BrokerMessage>}
+     */
+    public List<BrokerMessage> fetchTimeOutMessage4Retry(String status) {
+        return this.brokerMessageMapper.queryBrokerMessageStatus4Timeout(status);
+    }
+
+    public BrokerMessage getByMessageId(String messageId) {
+        return this.brokerMessageMapper.selectByPrimaryKey(messageId);
+    }
+
+    public int update4TryCount(String messageId) {
+        return this.brokerMessageMapper.update4TryCount(messageId, new Date());
     }
 }
