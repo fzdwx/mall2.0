@@ -23,7 +23,7 @@ public class BrokerMessageConfiguration {
     @Autowired
     private DataSource rabbitProducerDataSource;
 
-    @Value("classpath:broker_message.sql.sql")
+    @Value("classpath:broker_message.sql")
     private Resource schemaScript;
 
     /**

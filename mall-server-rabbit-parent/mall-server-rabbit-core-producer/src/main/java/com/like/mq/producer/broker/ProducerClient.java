@@ -49,7 +49,10 @@ public class ProducerClient implements MessageProducer {
 
     @Override
     public void send(List<Message> messages) throws MessageRunTimeException {
-
+        for (Message message : messages) {
+            message.setMessageType(MessageType.RAPID);
+        }
+        rabbitBroker.sendMessages();
     }
 
     @Override

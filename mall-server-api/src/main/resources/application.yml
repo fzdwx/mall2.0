@@ -11,6 +11,25 @@ spring:
   profiles:
     #    active: dev          #   云服务器测试环境
     active: local        #    本地测试环境
+  rabbitmq:
+    addresses: 8.131.57.243:5672
+    username: guest
+    password: guest
+    virtual-host: /
+    connection-timeout: 15000
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    template:
+      mandatory: true
+    listener:
+      direct:
+        auto-startup: false
+
+elastic:
+  job:
+    zk:
+      server-lists: 8.131.57.243:2181
+      namespace: elastic-job
   ##################################################
   #
   # 配置数据源信息

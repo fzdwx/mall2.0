@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 2021-03-11 16:14
  */
 @Configuration
-@ComponentScan({"com.like.mq.producer"})
+@ComponentScan({"com.like.mq.producer", "com.like.task.parse"})
 @EnableElasticJob
 public class RabbitProducerAutoConfigure {
 

@@ -1,12 +1,13 @@
 package com.like.task.parse;
 
+import com.dangdang.ddframe.job.api.ElasticJob;
 import com.dangdang.ddframe.job.config.JobCoreConfiguration;
 import com.dangdang.ddframe.job.config.JobTypeConfiguration;
 import com.dangdang.ddframe.job.config.dataflow.DataflowJobConfiguration;
 import com.dangdang.ddframe.job.config.script.ScriptJobConfiguration;
 import com.dangdang.ddframe.job.config.simple.SimpleJobConfiguration;
-import com.dangdang.ddframe.job.event.rdb.JobEventRdbConfiguration;
 import com.dangdang.ddframe.job.executor.handler.JobProperties;
+import com.dangdang.ddframe.job.lite.api.listener.ElasticJobListener;
 import com.dangdang.ddframe.job.lite.config.LiteJobConfiguration;
 import com.dangdang.ddframe.job.lite.spring.api.SpringJobScheduler;
 import com.dangdang.ddframe.job.reg.zookeeper.ZookeeperRegistryCenter;
@@ -14,15 +15,17 @@ import com.like.task.annotation.ElasticJobConfig;
 import com.like.task.autoconfigure.JobZookeeperProperties;
 import com.like.task.enums.ElasticJobType;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -34,15 +37,21 @@ import java.util.Map;
  * @since 2021-03-13 18:29
  */
 @Slf4j
+@Component
 public class ElasticJobConfigParser implements ApplicationListener<ApplicationReadyEvent> {
+    @Autowired
+    private JobZookeeperProperties jobZookeeperProperties;
+    @Autowired
+    private ZookeeperRegistryCenter zookeeperRegistryCenter;
 
-    private JobZookeeperProperties properties;
-    private ZookeeperRegistryCenter zkCenter;
+    public ElasticJobConfigParser() {
+        System.out.println("esjob配置器创建");
+    }
 
     public ElasticJobConfigParser(
             JobZookeeperProperties properties, ZookeeperRegistryCenter zkCenter) {
-        this.properties = properties;
-        this.zkCenter = zkCenter;
+        this.jobZookeeperProperties = properties;
+        this.zookeeperRegistryCenter = zkCenter;
     }
 
     @Override
@@ -66,7 +75,8 @@ public class ElasticJobConfigParser implements ApplicationListener<ApplicationRe
                 // 获取接口类型用于判断是什么类型的任务
                 String jobTypeName = conf.jobTypeName();
                 String jobClass = clazz.getName();
-                String jobName = this.properties.getNamespace() + "." + conf.name();
+//                String jobName = this.properties.getNamespace() + "." + conf.name();
+                String jobName = conf.name();
                 String cron = conf.cron();
                 String shardingItemParameters = conf.shardingItemParameters();
                 String description = conf.description();
@@ -130,40 +140,52 @@ public class ElasticJobConfigParser implements ApplicationListener<ApplicationRe
                         .jobShardingStrategyClass(jobShardingStrategyClass)
                         .reconcileIntervalMinutes(reconcileIntervalMinutes)
                         .build();
+                ElasticJob bean = ((ElasticJob) ioc.getBean(conf.name()));
 
-                // 	创建一个Spring的beanDefinition
-                BeanDefinitionBuilder factory = BeanDefinitionBuilder.rootBeanDefinition(SpringJobScheduler.class);
-                factory.setInitMethodName("init");
-                factory.setScope("prototype");
-
-                //	1.添加bean构造参数，相当于添加自己的真实的任务实现类
-                if (!ElasticJobType.SCRIPT.getType().equals(jobTypeName)) {
-                    factory.addConstructorArgValue(next);
+                List<ElasticJobListener> listeners = new ArrayList<>();
+                for (BeanDefinition targetElasticJobListener : getTargetElasticJobListeners(conf)) {
+                    ElasticJobListener e = (ElasticJobListener) targetElasticJobListener;
+                    listeners.add(e);
                 }
-                //	2.添加注册中心
-                factory.addConstructorArgValue(this.zkCenter);
-                //	3.添加LiteJobConfiguration
-                factory.addConstructorArgValue(jobConfig);
+                SpringJobScheduler job = new SpringJobScheduler(bean, zookeeperRegistryCenter, jobConfig,
+                                                                new JobEventConfig().jobEventConfiguration());
 
-                //	4.如果有eventTraceRdbDataSource 则也进行添加
-                if (StringUtils.hasText(eventTraceRdbDataSource)) {
-                    BeanDefinitionBuilder rdbFactory = BeanDefinitionBuilder
-                            .rootBeanDefinition(JobEventRdbConfiguration.class);
-                    rdbFactory.addConstructorArgReference(eventTraceRdbDataSource);
-                    factory.addConstructorArgValue(rdbFactory.getBeanDefinition());
-                }
-
-                //  5.添加监听
-                List<?> elasticJobListeners = getTargetElasticJobListeners(conf);
-                factory.addConstructorArgValue(elasticJobListeners);
-
-                // 	接下来就是把factory 也就是 SpringJobScheduler注入到Spring容器中
-                DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) ioc
-                        .getAutowireCapableBeanFactory();
-                String registerBeanName = conf.name() + "SpringJobScheduler";
-                defaultListableBeanFactory.registerBeanDefinition(registerBeanName, factory.getBeanDefinition());
-                SpringJobScheduler scheduler = (SpringJobScheduler) ioc.getBean(registerBeanName);
-                scheduler.init();
+                job.init();
+//                // 	创建一个Spring的beanDefinition
+//                BeanDefinitionBuilder factory = BeanDefinitionBuilder.rootBeanDefinition(SpringJobScheduler.class);
+//                factory.setInitMethodName("init");
+//                factory.setScope("prototype");
+//
+//                //	1.添加bean构造参数，相当于添加自己的真实的任务实现类
+//                if (!ElasticJobType.DATAFLOW.getType().equals(jobTypeName)) {
+//                    factory.addConstructorArgValue(next);
+//                }
+//                //	2.添加注册中心
+//                factory.addConstructorArgValue(this.zkCenter);
+//                //	3.添加LiteJobConfiguration
+//                factory.addConstructorArgValue(jobConfig);
+//
+//                //	4.如果有eventTraceRdbDataSource 则也进行添加
+//                if (StringUtils.hasText(eventTraceRdbDataSource)) {
+//                    BeanDefinitionBuilder rdbFactory = BeanDefinitionBuilder
+//                            .rootBeanDefinition(JobEventRdbConfiguration.class);
+//                    rdbFactory.addConstructorArgReference(eventTraceRdbDataSource);
+//                    factory.addConstructorArgValue(rdbFactory.getBeanDefinition());
+//                }
+//
+//                //  5.添加监听
+//                List<?> elasticJobListeners = getTargetElasticJobListeners(conf);
+//                factory.addConstructorArgValue(elasticJobListeners);
+//
+//                // 	接下来就是把factory 也就是 SpringJobScheduler注入到Spring容器中
+//                DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) ioc
+//                        .getAutowireCapableBeanFactory();
+//                String registerBeanName = conf.name();
+////                String registerBeanName = "SpringJobScheduler";
+//                System.out.println("registerBeanName = " + registerBeanName);
+//                defaultListableBeanFactory.registerBeanDefinition(registerBeanName, factory.getBeanDefinition());
+//                SpringJobScheduler scheduler = (SpringJobScheduler) ioc.getBean(registerBeanName);
+//                scheduler.init();
                 log.info("启动elastic-job作业: " + jobName);
             }
             log.info("共启动elastic-job数量:{}", beans.size());

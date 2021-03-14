@@ -16,6 +16,11 @@
             <artifactId>mall-server-base-service</artifactId>
             <version>0.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.like.mall2</groupId>
+            <artifactId>mall-server-rabbit-core-producer</artifactId>
+            <version>0.1</version>
+        </dependency>
     </dependencies>
 
     <repositories>

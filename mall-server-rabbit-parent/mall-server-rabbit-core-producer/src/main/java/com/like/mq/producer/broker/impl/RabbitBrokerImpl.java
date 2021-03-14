@@ -2,6 +2,7 @@ package com.like.mq.producer.broker.impl;
 
 import com.like.mq.base.Message;
 import com.like.mq.base.MessageType;
+import com.like.mq.producer.broker.MessageHolder;
 import com.like.mq.producer.broker.RabbitBroker;
 import com.like.mq.producer.constant.BrokerMessageConst;
 import com.like.mq.producer.constant.BrokerMessageStatus;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author like
@@ -73,7 +75,10 @@ public class RabbitBrokerImpl implements RabbitBroker {
 
     @Override
     public void sendMessages() {
-
+        List<Message> sends = MessageHolder.clear();
+        for (Message send : sends) {
+            doSendMessage(send);
+        }
     }
 
     /**

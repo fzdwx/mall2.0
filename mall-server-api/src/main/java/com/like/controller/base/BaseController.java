@@ -1,6 +1,9 @@
 package com.like.controller.base;
 
 import com.like.enums.YesOrNo;
+import com.like.mq.base.Message;
+import com.like.mq.base.MessageType;
+import com.like.mq.producer.broker.ProducerClient;
 import com.like.pojo.Orders;
 import com.like.pojo.Users;
 import com.like.pojo.vo.UsersVO;
@@ -10,8 +13,10 @@ import com.like.utils.RedisUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 /**
@@ -94,5 +99,25 @@ public class BaseController {
         toWebUser.setUserUniqueToken(uniqueToken);
         redisUtil.set(REDIS_USER_TOKEN_PREFIX + toWebUser.getId(), toWebUser.getUserUniqueToken());
         return toWebUser;
+    }
+
+    @Autowired
+    ProducerClient producerClient;
+
+    @RequestMapping("/test")
+    public void test() {
+        for (int i = 0; i < 10; i++) {
+            String id = UUID.randomUUID().toString();
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("name", "like");
+            map.put("age", "18");
+            Message message = Message.Builder.builder()
+                                             .withMessageId(id)
+                                             .withTopic("exchange1")
+                                             .withRoutingKey("spring.text")
+                                             .withAttributes(map)
+                                             .withMessageType(MessageType.RELIABILITY).get();
+            producerClient.send(message);
+        }
     }
 }

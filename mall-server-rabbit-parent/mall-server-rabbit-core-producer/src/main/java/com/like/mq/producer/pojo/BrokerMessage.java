@@ -1,7 +1,9 @@
 package com.like.mq.producer.pojo;
 
 import com.like.mq.base.Message;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
@@ -12,6 +14,8 @@ import java.util.Date;
  * @since 2021-03-12 19:37
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class BrokerMessage {
 
     private String messageId;

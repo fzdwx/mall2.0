@@ -21,7 +21,6 @@ public class MessageStoreService {
     @Autowired
     private BrokerMessageMapper brokerMessageMapper;
 
-
     /**
      * 插入
      * @param brokerMessage 代理消息

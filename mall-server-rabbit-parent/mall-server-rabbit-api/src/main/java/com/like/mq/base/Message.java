@@ -52,7 +52,7 @@ public class Message implements Serializable {
      * @author pdd20
      * @date 2021/03/10
      */
-    static class Builder {
+    public static class Builder {
         private Map<String, Object> attributes = new HashMap<>();
         private int delayMillis;
         private String messageId;

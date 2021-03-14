@@ -2,6 +2,7 @@ package com.like.task.autoconfigure;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "elastic.job.zk")
 @Component
 @Data
+@Primary
 public class JobZookeeperProperties {
 
     private int baseSleepTimeMilliseconds = 1000;

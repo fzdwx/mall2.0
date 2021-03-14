@@ -16,6 +16,11 @@
     </properties>
     <dependencies>
         <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.2.5</version>
+        </dependency>
+        <dependency>
             <groupId>com.like.mall2</groupId>
             <artifactId>mall-server-rabbit-common</artifactId>
             <version>0.1</version>

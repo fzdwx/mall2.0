@@ -1,6 +1,6 @@
 package com.like.mq.producer.config.database;
 
-import org.slf4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -15,9 +15,9 @@ import java.sql.SQLException;
 
 @Configuration
 @PropertySource({"classpath:application.properties"})
+@Slf4j
 public class RabbitProducerDataSourceConfiguration {
 
-	private static Logger LOGGER = org.slf4j.LoggerFactory.getLogger(RabbitProducerDataSourceConfiguration.class);
 
 	@Value("${rabbit.producer.druid.type}")
 	private Class<? extends DataSource> dataSourceType;
@@ -32,7 +32,7 @@ public class RabbitProducerDataSourceConfiguration {
 	@ConfigurationProperties(prefix = "rabbit.producer.druid.jdbc")
 	public DataSource rabbitProducerDataSource() throws SQLException {
 		DataSource rabbitProducerDataSource = DataSourceBuilder.create().type(dataSourceType).build();
-		LOGGER.info("============= rabbitProducerDataSource : {} ================", rabbitProducerDataSource);
+		log.info("============= rabbitProducerDataSource : {} ================", rabbitProducerDataSource);
 		return rabbitProducerDataSource;
 	}
 

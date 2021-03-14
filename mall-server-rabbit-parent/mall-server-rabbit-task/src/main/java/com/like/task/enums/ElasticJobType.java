@@ -8,7 +8,7 @@ package com.like.task.enums;
  */
 public enum ElasticJobType {
     SIMPLE("simpleJob", "简单类型"),
-    DATAFLOW("dataFlowJob", "流式类型"),
+    DATAFLOW("dataflowJob", "流式类型"),
     SCRIPT("scriptJob", "脚本类型");
 
     private String desc;
